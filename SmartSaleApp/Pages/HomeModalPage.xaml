@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="utf-8" ?>
+<ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+             x:Class="SmartSaleApp.Pages.HomeModalPage"
+             xmlns:vm="clr-namespace:SmartSaleApp.ViewModels"
+             xmlns:c="clr-namespace:SmartSaleApp.Converters"
+             x:DataType="vm:HomeModalViewModel"
+             BackgroundColor="#80000000">
+
+    <ContentPage.Resources>
+        <c:StringToIntConverter x:Key="StringToIntConverter" />
+        <c:StringToDoubleConverter x:Key="StringToDoubleConverter"  />
+    </ContentPage.Resources>
+
+    <Frame BackgroundColor="White" 
+           VerticalOptions="Center" 
+           HorizontalOptions="Center" 
+           WidthRequest="350" 
+           HeightRequest="400" 
+           CornerRadius="10">
+
+        <StackLayout>
+            <Grid Padding="0,0,0,30" >
+                <Label Text="{Binding Number, StringFormat='№ {0}'}"
+                       FontSize="18"
+                       VerticalOptions="EndAndExpand" />
+
+                <Button Text="X" 
+                        Command="{Binding CloseCommand}"
+                        WidthRequest="40" 
+                        HeightRequest="40"
+                        HorizontalOptions="EndAndExpand" />
+            </Grid>
+
+            <Picker ItemsSource="{Binding Products}" 
+                    ItemDisplayBinding="{Binding Name}" 
+                    SelectedItem="{Binding Product}"
+                    FontSize="18" />
+
+            <Entry Text="{Binding Count, Converter={StaticResource StringToIntConverter}}" 
+                   Placeholder="Кол-во" 
+                   Keyboard="Numeric"
+                   FontSize="18" />
+
+            <Entry Text="{Binding Price, Converter={StaticResource StringToDoubleConverter}}" 
+                   Placeholder="Цена" 
+                   Keyboard="Numeric"
+                   FontSize="18" />
+
+            <Label Text="{Binding Total, StringFormat='Итого: {0:N0}'}" 
+                   HorizontalOptions="CenterAndExpand" 
+                   VerticalOptions="CenterAndExpand"
+                   FontSize="18" />
+
+            <Button Text="Сохранить" 
+                    Command="{Binding SaveCommand}" 
+                    VerticalOptions="EndAndExpand"
+                    FontSize="18" />
+            
+        </StackLayout>
+    </Frame>
+</ContentPage>

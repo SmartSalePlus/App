@@ -3,13 +3,21 @@
     x:Class="SmartSaleApp.AppShell"
     xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
     xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-    xmlns:local="clr-namespace:SmartSaleApp"
-    Shell.FlyoutBehavior="Disabled"
-    Title="SmartSaleApp">
+    xmlns:local="clr-namespace:SmartSaleApp.Pages"
+    Shell.FlyoutBehavior="Disabled">
 
-    <ShellContent
-        Title="Home"
-        ContentTemplate="{DataTemplate local:MainPage}"
-        Route="MainPage" />
+    <TabBar>
+        <Tab Title="Home">
+            <ShellContent ContentTemplate="{DataTemplate local:HomePage}" Route="HomePage" />
+        </Tab>
+
+        <Tab Title="HomeModalPage">
+            <ShellContent ContentTemplate="{DataTemplate local:HomeModalPage}" Route="HomeModalPage" />
+        </Tab>
+        
+        <Tab Title="Home">
+            <ShellContent ContentTemplate="{DataTemplate local:HomePage}" Route="HomePage" />
+        </Tab>
+    </TabBar>
 
 </Shell>
