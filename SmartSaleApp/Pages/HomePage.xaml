@@ -1,15 +1,19 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-             xmlns:ViewModels="clr-namespace:SmartSaleApp.ViewModels"
-             x:Class="SmartSaleApp.Pages.HomePage">
+             xmlns:vm="clr-namespace:SmartSaleApp.ViewModels"
+             x:Class="SmartSaleApp.Pages.HomePage"
+             x:DataType="vm:HomeViewModel">
 
     <Grid>
         <VerticalStackLayout Padding="20,20,20,20">
-            <HorizontalStackLayout Spacing="20" Padding="0,0,0,20">
-                <Entry Text="{Binding BuyerName}" Placeholder="Клиент" WidthRequest="250" />
-                <DatePicker Date="{Binding Date, Mode=OneWayToSource}" Format="dd.MMMM.yyyy" />
-            </HorizontalStackLayout>
+            <DatePicker Date="{Binding Date, Mode=OneWayToSource}" 
+                            Format="dd.MMMM.yyyy"
+                            FontSize="18"/>
+
+            <Entry Text="{Binding BuyerName}"
+                       Placeholder="Покупатель"
+                       FontSize="18"/>
 
             <CollectionView ItemsSource="{Binding InvoiceDetails}">
                 <CollectionView.ItemTemplate>

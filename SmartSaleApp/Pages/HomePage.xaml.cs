@@ -1,13 +1,12 @@
-using SmartSaleApp.ViewModelsl;
+using SmartSaleApp.Interfaces.Factory;
 
 namespace SmartSaleApp.Pages;
 
 public partial class HomePage : ContentPage
 {
-	public HomePage(HomeViewModel homeViewModel)
+	public HomePage(IHomeViewModelFactory homeViewModelFactory)
 	{
 		InitializeComponent();
-		homeViewModel.Navigation = Navigation;
-		BindingContext = homeViewModel;
+		BindingContext = homeViewModelFactory.Create(Navigation);
 	}
 }

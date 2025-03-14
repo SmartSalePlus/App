@@ -1,8 +1,9 @@
 ﻿using Microsoft.Extensions.Logging;
 using SmartSaleApp.Extensions;
+using SmartSaleApp.Factories;
+using SmartSaleApp.Interfaces.Factory;
 using SmartSaleApp.Pages;
 using SmartSaleApp.ViewModels;
-using SmartSaleApp.ViewModelsl;
 
 namespace SmartSaleApp;
 
@@ -22,6 +23,9 @@ public static class MauiProgram {
 
         builder.Services.AddScoped<HomeViewModel>();
         builder.Services.AddScoped<HomeModalViewModel>();
+
+        builder.Services.AddScoped<IHomeViewModelFactory, HomeViewModelFactory>();
+        builder.Services.AddScoped<IHomeModalViewModelFactory, HomeModalViewModelFactory>();
 
 #if DEBUG
         builder.Logging.AddDebug();

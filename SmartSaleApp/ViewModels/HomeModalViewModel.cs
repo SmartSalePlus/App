@@ -7,37 +7,43 @@ using System.Windows.Input;
 
 namespace SmartSaleApp.ViewModels;
 
-public sealed partial class HomeModalViewModel : INotifyPropertyChanged {
+public sealed class HomeModalViewModel : INotifyPropertyChanged {
     public event PropertyChangedEventHandler? PropertyChanged;
+    public int Number { get; }
     public ICommand SaveCommand { get; }
     public ICommand CloseCommand { get; }
 
     public ObservableCollection<Product> Products {
         get => _products;
         set {
-            _products = value;
-            OnPropertyChanged();
+            if (_products != value) {
+                _products = value;
+                OnPropertyChanged();
+            }
         }
     }
 
     public int? Count {
         get => _invoiceDetail.Count;
         set {
-            _invoiceDetail.Count = value;
-            Total = GetTotal();
-            OnPropertyChanged();
-            ((Command)SaveCommand).ChangeCanExecute();
-
+            if (_invoiceDetail.Count != value) {
+                _invoiceDetail.Count = value;
+                Total = GetTotal();
+                OnPropertyChanged();
+                ((Command)SaveCommand).ChangeCanExecute();
+            }
         }
     }
 
     public double? Price {
         get => _invoiceDetail.Price;
         set {
-            _invoiceDetail.Price = value;
-            Total = GetTotal();
-            OnPropertyChanged();
-            ((Command)SaveCommand).ChangeCanExecute();
+            if (_invoiceDetail.Price != value) {
+                _invoiceDetail.Price = value;
+                Total = GetTotal();
+                OnPropertyChanged();
+                ((Command)SaveCommand).ChangeCanExecute();
+            }
         }
     }
 
@@ -45,71 +51,75 @@ public sealed partial class HomeModalViewModel : INotifyPropertyChanged {
     public Product? Product {
         get => _invoiceDetail.Product;
         set {
-            _invoiceDetail.Product = value;
-            Price ??= value?.Price;
-            Total = GetTotal();
-            OnPropertyChanged();
-            ((Command)SaveCommand).ChangeCanExecute();
+            if (_invoiceDetail.Product != value) {
+                _invoiceDetail.Product = value;
+                Price ??= value?.Price;
+                Total = GetTotal();
+                OnPropertyChanged();
+                ((Command)SaveCommand).ChangeCanExecute();
+            }
         }
     }
 
     public double? Total {
         get => _invoiceDetail.Total;
         set {
-            _invoiceDetail.Total = value;
-            OnPropertyChanged();
+            if (_invoiceDetail.Total != value) {
+                _invoiceDetail.Total = value;
+                OnPropertyChanged();
+            }
         }
     }
 
-    public int Number => _number;
-
     private readonly IProductApiClient _productApiClient;
-    public INavigation Navigation { get; set; }
-    public ObservableCollection<InvoiceDetail> InvoiceDetails { get; set; }
-    //private readonly INavigation _navigation;
+    private readonly INavigation _navigation;
+    private readonly Action<InvoiceDetail> _invoiceDetailAddedHandler;
     private readonly InvoiceDetail _invoiceDetail;
-
-    private int _number;
     private ObservableCollection<Product> _products = [];
 
-    public HomeModalViewModel(IProductApiClient productApiClient) {
+    public HomeModalViewModel(
+        IProductApiClient productApiClient,
+        INavigation navigation,
+        Action<InvoiceDetail> invoiceDetailAddedHandler, 
+        int number
+    ) {
         _productApiClient = productApiClient;
-        //_navigation = navigation;
-        _number = 1;
+        _navigation = navigation;
+        _invoiceDetailAddedHandler = invoiceDetailAddedHandler;
+        Number = number;
         _invoiceDetail = new();
-        _ = GetProducts();
-        SaveCommand = new Command(Save, IsValid);
-        CloseCommand = new Command(Close);
+        _ = GetProductsAsync();
+        SaveCommand = new Command(async () => await SaveAsync(), IsValid);
+        CloseCommand = new Command(async () => await CloseAsync());
     }
 
-    private async Task GetProducts() {
+    private async Task GetProductsAsync() {
         var products = await _productApiClient.GetAsync();
         Products = new(products);
     }
 
-    private void Save() {
-        InvoiceDetails.Add(_invoiceDetail);
-        _number++;
-        OnPropertyChanged(nameof(Number));
+    private async Task SaveAsync() {
+        _invoiceDetailAddedHandler?.Invoke(_invoiceDetail);
+        var t = Application.Current?.MainPage;
+        if (t != null) {
+            await t.Navigation.PopModalAsync();
+        }
     }
     
-    private async void Close() {
-        await Navigation.PopModalAsync();
+    private async Task CloseAsync() {
+        await _navigation.PopModalAsync();
     }
 
     private double? GetTotal() {
         var total = Product?.CountInPackage * Count * Price;
-        if (total.HasValue) {
-            return Math.Round(total.Value);
-        }
-        return total;
+        return total.HasValue ? Math.Round(total.Value) : total;
     }
 
     private bool IsValid() {
         return Product is not null && Count > 0 && Price > 0;
     }
 
-    public void OnPropertyChanged([CallerMemberName] string prop = "") {
+    private void OnPropertyChanged([CallerMemberName] string prop = "") {
         PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(prop));
     }
 }

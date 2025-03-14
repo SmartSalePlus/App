@@ -8,9 +8,6 @@ public sealed class StringToDoubleConverter : IValueConverter {
     }
 
     public object? ConvertBack(object? value, Type targetType, object? parameter, CultureInfo culture) {
-        if (double.TryParse(value?.ToString(), out double result)) {
-            return result;
-        }
-        return null;
+        return double.TryParse(value?.ToString(), out double result) ? result : null;
     }
 }
