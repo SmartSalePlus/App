@@ -1,5 +1,6 @@
-﻿using SmartSaleApp.Interfaces.ApiClients;
-using SmartSaleApp.Models;
+﻿using SmartSaleApp.Dto;
+using SmartSaleApp.Extensions;
+using SmartSaleApp.Interfaces.ApiClients;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
@@ -9,19 +10,10 @@ namespace SmartSaleApp.ViewModels;
 
 public sealed class HomeModalViewModel : INotifyPropertyChanged {
     public event PropertyChangedEventHandler? PropertyChanged;
-    public int Number { get; }
+    public int Number => _invoiceDetail.Number;
     public ICommand SaveCommand { get; }
     public ICommand CloseCommand { get; }
-
-    public ObservableCollection<Product> Products {
-        get => _products;
-        set {
-            if (_products != value) {
-                _products = value;
-                OnPropertyChanged();
-            }
-        }
-    }
+    public ObservableCollection<ProductDto> Products { get; } = [];
 
     public int? Count {
         get => _invoiceDetail.Count;
@@ -48,11 +40,11 @@ public sealed class HomeModalViewModel : INotifyPropertyChanged {
     }
 
 
-    public Product? Product {
-        get => _invoiceDetail.Product;
+    public ProductDto? Product {
+        get => _invoiceDetail.ProductDto;
         set {
-            if (_invoiceDetail.Product != value) {
-                _invoiceDetail.Product = value;
+            if (_invoiceDetail.ProductDto != value) {
+                _invoiceDetail.ProductDto = value;
                 Price ??= value?.Price;
                 Total = GetTotal();
                 OnPropertyChanged();
@@ -73,21 +65,19 @@ public sealed class HomeModalViewModel : INotifyPropertyChanged {
 
     private readonly IProductApiClient _productApiClient;
     private readonly INavigation _navigation;
-    private readonly Action<InvoiceDetail> _invoiceDetailAddedHandler;
-    private readonly InvoiceDetail _invoiceDetail;
-    private ObservableCollection<Product> _products = [];
+    private readonly Action<InvoiceDetailDto> _invoiceDetailAddedHandler;
+    private readonly InvoiceDetailDto _invoiceDetail;
 
     public HomeModalViewModel(
         IProductApiClient productApiClient,
         INavigation navigation,
-        Action<InvoiceDetail> invoiceDetailAddedHandler, 
+        Action<InvoiceDetailDto> invoiceDetailAddedHandler,
         int number
     ) {
         _productApiClient = productApiClient;
         _navigation = navigation;
         _invoiceDetailAddedHandler = invoiceDetailAddedHandler;
-        Number = number;
-        _invoiceDetail = new();
+        _invoiceDetail = new() { Number = number };
         _ = GetProductsAsync();
         SaveCommand = new Command(async () => await SaveAsync(), IsValid);
         CloseCommand = new Command(async () => await CloseAsync());
@@ -95,7 +85,9 @@ public sealed class HomeModalViewModel : INotifyPropertyChanged {
 
     private async Task GetProductsAsync() {
         var products = await _productApiClient.GetAsync();
-        Products = new(products);
+        foreach (var product in products) {
+            Products.Add(product.ToDto());
+        }
     }
 
     private async Task SaveAsync() {
@@ -105,7 +97,7 @@ public sealed class HomeModalViewModel : INotifyPropertyChanged {
             await t.Navigation.PopModalAsync();
         }
     }
-    
+
     private async Task CloseAsync() {
         await _navigation.PopModalAsync();
     }

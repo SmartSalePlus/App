@@ -33,22 +33,22 @@
             </Grid>
 
             <Picker ItemsSource="{Binding Products}" 
-                    ItemDisplayBinding="{Binding Name}" 
+                    ItemDisplayBinding="{Binding NameWithCountInPackage}" 
                     SelectedItem="{Binding Product}"
-                    Title="Покупатель"
+                    Title="Наименование"
                     FontSize="18" />
 
             <Entry Text="{Binding Count, Converter={StaticResource StringToIntConverter}}" 
                    Placeholder="Кол-во" 
                    Keyboard="Numeric"
                    FontSize="18"
-                   MaxLength="7"/>
+                   MaxLength="3"/>
 
             <Entry Text="{Binding Price, Converter={StaticResource StringToDoubleConverter}}" 
                    Placeholder="Цена" 
                    Keyboard="Numeric"
                    FontSize="18"
-                   MaxLength="7"/>
+                   MaxLength="4"/>
 
             <Label Text="{Binding Total, StringFormat='Итого: {0:N0}'}" 
                    HorizontalOptions="CenterAndExpand" 
