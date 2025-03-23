@@ -16,7 +16,7 @@ public sealed class HomeViewModel : INotifyPropertyChanged {
     public ICommand AddCommand { get; }
     public ICommand SaveCommand { get; }
     public ICommand SetIsPaidCommand { get; }
-    public ObservableCollection<Buyer> Buyers { get; } = [];
+    public ObservableCollection<Buyer> Buyers { get; private set; } = [];
     public ObservableCollection<InvoiceDetailDto> InvoiceDetails { get; } = [];
 
     public DateOnly Date {
@@ -81,6 +81,13 @@ public sealed class HomeViewModel : INotifyPropertyChanged {
         }
     }
 
+    public InvoiceDetailDto InvoiceDetailDto {
+        set {
+            _ = EditAsync(value);
+            OnPropertyChanged();
+        }
+    }
+
     private readonly IHomeModalViewModelFactory _homeModalViewModelFactory;
     private readonly IBuyerApiClient _buyerApiClient;
     private readonly IInvoiceApiClient _invoiceApiClient;
@@ -101,28 +108,38 @@ public sealed class HomeViewModel : INotifyPropertyChanged {
         _invoice = new();
         _ = GetBuyersAsync();
         _number = 1;
-        AddCommand = new Command(async () => await OpenModalPageAsync());
+        AddCommand = new Command(async () => await AddAsync());
         SaveCommand = new Command(async () => await SaveAsync(), IsValid);
         SetIsPaidCommand = new Command(() => IsPaid = !IsPaid);
     }
 
     private async Task GetBuyersAsync() {
         var buyers = await _buyerApiClient.GetAsync();
-        foreach (var buyer in buyers) {
-            Buyers.Add(buyer);
-        }
+        Buyers = new(buyers);
+        OnPropertyChanged(nameof(Buyers));
     }
 
-    private async Task OpenModalPageAsync() {
-        var homeModalViewModel = _homeModalViewModelFactory.Create(_navigation, OnAdded, _number);
+    private async Task AddAsync() {
+        var invoiceDetailDto = new InvoiceDetailDto() { Number = _number };
+        await OpenModalPageAsync(invoiceDetailDto , true);
+    }
+
+    private async Task EditAsync(InvoiceDetailDto invoiceDetailDto) {
+        await OpenModalPageAsync(invoiceDetailDto, false);
+    }
+
+    private async Task OpenModalPageAsync(InvoiceDetailDto invoiceDetailDto, bool isAdd) {
+        var homeModalViewModel = _homeModalViewModelFactory.Create(_navigation, OnAdded, invoiceDetailDto, isAdd);
         var homeModalPage = new HomeModalPage(homeModalViewModel);
         await _navigation.PushModalAsync(homeModalPage);
     }
 
-    private void OnAdded(InvoiceDetailDto invoiceDetail) {
-        InvoiceDetails.Add(invoiceDetail);
+    private void OnAdded(InvoiceDetailDto invoiceDetail, bool isAdd) {
+        if (isAdd) {
+            InvoiceDetails.Add(invoiceDetail);
+            _number++;
+        }
         Total = InvoiceDetails.Sum(x => x.Total);
-        _number++;
     }
 
     private async Task SaveAsync() {

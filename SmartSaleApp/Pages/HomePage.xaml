@@ -19,23 +19,21 @@
                     SelectedItem="{Binding Buyer}"/>
 
             <ScrollView HeightRequest="500">
-                <CollectionView ItemsSource="{Binding InvoiceDetails}" SelectionMode="Single">
+                <CollectionView x:Name="InvoiceDetails" ItemsSource="{Binding InvoiceDetails}" SelectionMode="Single" SelectedItem="{Binding InvoiceDetailDto}">
                     <CollectionView.Header>
-                        <StackLayout>
-                            <StackLayout Padding="8" Orientation="Horizontal" Spacing="4" BackgroundColor="White">
-                                <Label Text="№" WidthRequest="20" />
-                                <Label Text="Наименование" WidthRequest="190" />
-                                <Label Text="К" WidthRequest="25" />
-                                <Label Text="Цена" WidthRequest="40" />
-                                <Label Text="Сумма" HorizontalOptions="EndAndExpand" />
-                            </StackLayout>
+                        <StackLayout Padding="8" Orientation="Horizontal" Spacing="4" BackgroundColor="White">
+                            <Label Text="№" WidthRequest="20" />
+                            <Label Text="Наименование" WidthRequest="190" />
+                            <Label Text="К" WidthRequest="25" />
+                            <Label Text="Цена" WidthRequest="40" />
+                            <Label Text="Сумма" HorizontalOptions="EndAndExpand" />
                         </StackLayout>
                     </CollectionView.Header>
                     <CollectionView.ItemTemplate>
                         <DataTemplate>
                             <StackLayout Padding="8" Orientation="Horizontal" Spacing="4" BackgroundColor="White">
                                 <Label Text="{Binding Number}" WidthRequest="20" />
-                                <Label Text="{Binding Product.NameWithCountInPackage}" WidthRequest="190" />
+                                <Label Text="{Binding ProductDto.NameWithCountInPackage}" WidthRequest="190" />
                                 <Label Text="{Binding Count}" WidthRequest="25" />
                                 <Label Text="{Binding Price}" WidthRequest="40" />
                                 <Label Text="{Binding Total}" HorizontalOptions="EndAndExpand" />

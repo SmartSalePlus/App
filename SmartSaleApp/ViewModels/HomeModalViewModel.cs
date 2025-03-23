@@ -13,7 +13,7 @@ public sealed class HomeModalViewModel : INotifyPropertyChanged {
     public int Number => _invoiceDetail.Number;
     public ICommand SaveCommand { get; }
     public ICommand CloseCommand { get; }
-    public ObservableCollection<ProductDto> Products { get; } = [];
+    public ObservableCollection<ProductDto> Products { get; private set; } = [];
 
     public int? Count {
         get => _invoiceDetail.Count;
@@ -43,7 +43,7 @@ public sealed class HomeModalViewModel : INotifyPropertyChanged {
     public ProductDto? Product {
         get => _invoiceDetail.ProductDto;
         set {
-            if (_invoiceDetail.ProductDto != value) {
+            if (value is not null && _invoiceDetail.ProductDto != value) {
                 _invoiceDetail.ProductDto = value;
                 Price ??= value?.Price;
                 Total = GetTotal();
@@ -65,19 +65,22 @@ public sealed class HomeModalViewModel : INotifyPropertyChanged {
 
     private readonly IProductApiClient _productApiClient;
     private readonly INavigation _navigation;
-    private readonly Action<InvoiceDetailDto> _invoiceDetailAddedHandler;
+    private readonly Action<InvoiceDetailDto, bool> _invoiceDetailAddedHandler;
     private readonly InvoiceDetailDto _invoiceDetail;
+    private readonly bool _isAdd;
 
     public HomeModalViewModel(
         IProductApiClient productApiClient,
         INavigation navigation,
-        Action<InvoiceDetailDto> invoiceDetailAddedHandler,
-        int number
+        Action<InvoiceDetailDto, bool> invoiceDetailAddedHandler,
+        InvoiceDetailDto invoiceDetailDto,
+        bool isAdd
     ) {
         _productApiClient = productApiClient;
         _navigation = navigation;
         _invoiceDetailAddedHandler = invoiceDetailAddedHandler;
-        _invoiceDetail = new() { Number = number };
+        _invoiceDetail = invoiceDetailDto;
+        _isAdd = isAdd;
         _ = GetProductsAsync();
         SaveCommand = new Command(async () => await SaveAsync(), IsValid);
         CloseCommand = new Command(async () => await CloseAsync());
@@ -85,17 +88,14 @@ public sealed class HomeModalViewModel : INotifyPropertyChanged {
 
     private async Task GetProductsAsync() {
         var products = await _productApiClient.GetAsync();
-        foreach (var product in products) {
-            Products.Add(product.ToDto());
-        }
+        Products = new(products.ToDto());
+        OnPropertyChanged(nameof(Products));
+        Product = Products.FirstOrDefault(x => x.Id == _invoiceDetail.ProductDto?.Id);
     }
 
     private async Task SaveAsync() {
-        _invoiceDetailAddedHandler?.Invoke(_invoiceDetail);
-        var t = Application.Current?.MainPage;
-        if (t != null) {
-            await t.Navigation.PopModalAsync();
-        }
+        _invoiceDetailAddedHandler?.Invoke(_invoiceDetail, _isAdd);
+        await _navigation.PopModalAsync();
     }
 
     private async Task CloseAsync() {

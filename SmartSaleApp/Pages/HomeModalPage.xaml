@@ -34,7 +34,7 @@
 
             <Picker ItemsSource="{Binding Products}" 
                     ItemDisplayBinding="{Binding NameWithCountInPackage}" 
-                    SelectedItem="{Binding Product}"
+                    SelectedItem="{Binding Product}"            
                     Title="Наименование"
                     FontSize="18" />
 
@@ -59,7 +59,7 @@
                     Command="{Binding SaveCommand}" 
                     VerticalOptions="EndAndExpand"
                     FontSize="18" />
-            
+
         </StackLayout>
     </Frame>
 </ContentPage>

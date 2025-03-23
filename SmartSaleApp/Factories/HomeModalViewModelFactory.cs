@@ -12,7 +12,12 @@ public sealed class HomeModalViewModelFactory : IHomeModalViewModelFactory {
         _productApiClient = productApiClient;
     }
 
-    public HomeModalViewModel Create(INavigation navigation, Action<InvoiceDetailDto> invoiceDetailAddedHandler, int number) {
-        return new(_productApiClient, navigation, invoiceDetailAddedHandler, number);
+    public HomeModalViewModel Create(
+        INavigation navigation,
+        Action<InvoiceDetailDto, bool> invoiceDetailAddedHandler,
+        InvoiceDetailDto invoiceDetailDto,
+        bool isAdd
+    ) {
+        return new(_productApiClient, navigation, invoiceDetailAddedHandler, invoiceDetailDto, isAdd);
     }
 }
