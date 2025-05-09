@@ -1,6 +1,6 @@
-﻿using SmartSaleApp.Dto;
-using SmartSaleApp.Interfaces.ApiClients;
+﻿using SmartSaleApp.Interfaces.ApiClients;
 using SmartSaleApp.Interfaces.Factory;
+using SmartSaleApp.Models.View;
 using SmartSaleApp.ViewModels;
 
 namespace SmartSaleApp.Factories;
@@ -12,12 +12,7 @@ public sealed class HomeModalViewModelFactory : IHomeModalViewModelFactory {
         _productApiClient = productApiClient;
     }
 
-    public HomeModalViewModel Create(
-        INavigation navigation,
-        Action<InvoiceDetailDto, bool> invoiceDetailAddedHandler,
-        InvoiceDetailDto invoiceDetailDto,
-        bool isAdd
-    ) {
-        return new(_productApiClient, navigation, invoiceDetailAddedHandler, invoiceDetailDto, isAdd);
+    public HomeModalViewModel Create(INavigation navigation, InvoiceDetailViewModel invoiceDetailViewModel, bool isAdd) {
+        return new(_productApiClient, navigation, invoiceDetailViewModel, isAdd);
     }
 }

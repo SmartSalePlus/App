@@ -1,4 +1,6 @@
-﻿namespace SmartSaleApp.Models;
+﻿using SmartSaleApp.Models.Data;
+
+namespace SmartSaleApp.Models;
 
 public sealed record Reception(
     int Id,

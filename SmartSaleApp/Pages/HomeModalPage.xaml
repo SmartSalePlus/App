@@ -23,18 +23,18 @@
             <Grid Padding="0,0,0,30" >
                 <Label Text="{Binding Number, StringFormat='№ {0}'}"
                        FontSize="18"
-                       VerticalOptions="EndAndExpand" />
+                       VerticalOptions="End" />
 
-                <Button Text="X" 
-                        Command="{Binding CloseCommand}"
+                <Button Text="X"
+                        Clicked="Close"
                         WidthRequest="40" 
                         HeightRequest="40"
-                        HorizontalOptions="EndAndExpand" />
+                        HorizontalOptions="End" />
             </Grid>
 
-            <Picker ItemsSource="{Binding Products}" 
-                    ItemDisplayBinding="{Binding NameWithCountInPackage}" 
-                    SelectedItem="{Binding Product}"            
+            <Picker ItemsSource="{Binding ProductViewModels}" 
+                    ItemDisplayBinding="{Binding .}" 
+                    SelectedItem="{Binding ProductViewModel}"            
                     Title="Наименование"
                     FontSize="18" />
 
@@ -51,13 +51,13 @@
                    MaxLength="4"/>
 
             <Label Text="{Binding Total, StringFormat='Итого: {0:N0}'}" 
-                   HorizontalOptions="CenterAndExpand" 
-                   VerticalOptions="CenterAndExpand"
+                   Margin="0,20,0,0"
+                   HorizontalOptions="Center"
                    FontSize="18" />
 
             <Button Text="Сохранить" 
-                    Command="{Binding SaveCommand}" 
-                    VerticalOptions="EndAndExpand"
+                    Margin="0,50,0,0"
+                    Command="{Binding SaveCommand}"
                     FontSize="18" />
 
         </StackLayout>

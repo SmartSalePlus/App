@@ -9,4 +9,8 @@ public partial class HomeModalPage : ContentPage
 		InitializeComponent();
 		BindingContext = homeModalViewModel;
 	}
+
+    private void Close(object sender, EventArgs e) {
+        Navigation.PopModalAsync();
+    }
 }

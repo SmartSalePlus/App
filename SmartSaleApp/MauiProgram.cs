@@ -1,5 +1,5 @@
 ﻿using Microsoft.Extensions.Logging;
-using SmartSaleApp.Extensions;
+using SmartSaleApp.Extensions.DI;
 using SmartSaleApp.Factories;
 using SmartSaleApp.Interfaces.Factory;
 using SmartSaleApp.Pages;

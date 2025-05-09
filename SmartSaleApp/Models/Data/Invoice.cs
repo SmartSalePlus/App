@@ -1,4 +1,4 @@
-﻿namespace SmartSaleApp.Models;
+﻿namespace SmartSaleApp.Models.Data;
 
 public sealed record Invoice(
     int Id,
@@ -7,6 +7,6 @@ public sealed record Invoice(
     double Discount,
     double TotalWithDiscount,
     bool IsPaid,
-    Buyer Buyer,
+    int BuyerId,
     IEnumerable<InvoiceDetail> InvoiceDetails
 );

@@ -1,11 +1,9 @@
 ﻿using Refit;
 using SmartSaleApp.Interfaces.ApiClients;
 
-namespace SmartSaleApp.Extensions;
+namespace SmartSaleApp.Extensions.DI;
 
 internal static class ApiClientsRegisterExtension {
-    private const string BaseAddress = "https://10.0.2.2:7270/api";
-
     public static IServiceCollection AddApiClients(this IServiceCollection services) {
         services.AddApiClient<IBuyerApiClient>("buyer");
         services.AddApiClient<IInvoiceApiClient>("invoice");
@@ -17,7 +15,7 @@ internal static class ApiClientsRegisterExtension {
 
     private static IServiceCollection AddApiClient<T>(this IServiceCollection services, string controllerName) where T : class {
         services.AddRefitClient<T>()
-            .ConfigureHttpClient(x => x.BaseAddress = new Uri($"{BaseAddress}/{controllerName}"))
+            .ConfigureHttpClient(x => x.BaseAddress = new Uri($"{GetBaseAddress()}/{controllerName}"))
             .ConfigurePrimaryHttpMessageHandler(() => {
                 var handler = new HttpClientHandler();
 #if DEBUG
@@ -31,5 +29,13 @@ internal static class ApiClientsRegisterExtension {
             });
 
         return services;
+    }
+
+    private static string GetBaseAddress() {
+        if (OperatingSystem.IsAndroid()) {
+            return "https://10.0.2.2:7270/api";
+        }
+
+        return "https://localhost:7270/api";
     }
 }

@@ -1,5 +1,5 @@
 ﻿using Refit;
-using SmartSaleApp.Models;
+using SmartSaleApp.Models.Data;
 
 namespace SmartSaleApp.Interfaces.ApiClients;
 

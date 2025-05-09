@@ -1,7 +1,7 @@
-﻿namespace SmartSaleApp.Models;
+﻿namespace SmartSaleApp.Models.Data;
 
 public sealed record ReceptionDetail(
     int Count,
     double Price,
-    Product Product
+    int ProductId
 );

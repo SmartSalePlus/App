@@ -1,8 +1,8 @@
-﻿namespace SmartSaleApp.Models;
+﻿namespace SmartSaleApp.Models.Data;
 
 public sealed record InvoiceDetail(
     int Count,
     double Price,
     double Total,
-    Product Product
+    int ProductId
 );
