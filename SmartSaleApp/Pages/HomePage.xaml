@@ -9,107 +9,100 @@
         <c:StringToDoubleConverter x:Key="StringToDoubleConverter"  />
     </ContentPage.Resources>
 
-    <VerticalStackLayout>
-        <VerticalStackLayout Padding="20,20,20,20">
-            <DatePicker Date="{Binding Date}" 
-                            Format="dd.MMMM.yyyy" />
+    <Grid Padding="20">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="8*" />
+            <RowDefinition Height="Auto" />
+            <RowDefinition Height="*" />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
 
-            <Picker ItemsSource="{Binding Buyers}"
-                    ItemDisplayBinding="{Binding Name}"
-                    SelectedItem="{Binding Buyer}"/>
 
-            <ScrollView HeightRequest="300">
-                <!--<ListView ItemsSource="{Binding InvoiceDetailViewModels}" 
-                          SelectionMode="Single" 
-                          SelectedItem="{Binding InvoiceDetailViewModel, Mode=TwoWay}">
-                    <ListView.Header>
-                        <HorizontalStackLayout Padding="8" Spacing="4" BackgroundColor="White">
-                            <Label Text="№" WidthRequest="20" />
-                            <Label Text="Наименование" WidthRequest="190" />
-                            <Label Text="К-во" WidthRequest="30" />
-                            <Label Text="Цена" WidthRequest="40" />
-                            <Label Text="Сумма" WidthRequest="65" HorizontalTextAlignment="End" />
-                        </HorizontalStackLayout>
-                    </ListView.Header>
-                    <ListView.ItemTemplate>
-                        <DataTemplate>
-                            <ViewCell>
-                                <HorizontalStackLayout Padding="8" Spacing="4" BackgroundColor="White">
-                                    <Label Text="{Binding Number}" WidthRequest="20" />
-                                    <Label Text="{Binding ProductViewModel}" WidthRequest="190" />
-                                    <Label Text="{Binding Count}" WidthRequest="30" />
-                                    <Label Text="{Binding Price}" WidthRequest="40" />
-                                    <Label Text="{Binding Total}" WidthRequest="65" HorizontalTextAlignment="End" />
-                                </HorizontalStackLayout>
-                            </ViewCell>
-                        </DataTemplate>
-                    </ListView.ItemTemplate>
-                </ListView>-->
-                <CollectionView ItemsSource="{Binding InvoiceDetailViewModels}" 
-                                SelectionMode="Single"         
-                                SelectedItem="{Binding InvoiceDetailViewModel}" >
-                    <CollectionView.Header>
-                        <HorizontalStackLayout Padding="8" Spacing="4" BackgroundColor="White">
-                            <Label Text="№" WidthRequest="20" />
-                            <Label Text="Наименование" WidthRequest="190" />
-                            <Label Text="К-во" WidthRequest="30" />
-                            <Label Text="Цена" WidthRequest="40" />
-                            <Label Text="Сумма" WidthRequest="65" HorizontalTextAlignment="End" />
-                        </HorizontalStackLayout>
-                    </CollectionView.Header>
-                    <CollectionView.ItemTemplate>
-                        <DataTemplate>
-                            <HorizontalStackLayout Padding="8" Spacing="4" BackgroundColor="White">
-                                <Label Text="{Binding Number}" WidthRequest="20" />
-                                <Label Text="{Binding ProductViewModel}" WidthRequest="190" />
-                                <Label Text="{Binding Count}" WidthRequest="30" />
-                                <Label Text="{Binding Price}" WidthRequest="40" />
-                                <Label Text="{Binding Total}" WidthRequest="65" HorizontalTextAlignment="End" />
-                            </HorizontalStackLayout>
-                        </DataTemplate>
-                    </CollectionView.ItemTemplate>
-                </CollectionView>
-            </ScrollView>
-            <StackLayout Orientation="Horizontal" Padding="8,8,8,0" VerticalOptions="Center">
-                <Label Text="{Binding Total, StringFormat='Итого: {0}'}"
-                       WidthRequest="250"
-                       VerticalOptions="Center" />
+        <DatePicker Grid.Row="0" Date="{Binding Date}" Format="dd-MM-yyyy" />
 
-                <Entry Text="{Binding Discount, Converter={StaticResource StringToDoubleConverter}}"
-                       Placeholder="Скидка"
-                       Keyboard="Numeric"
-                       MaxLength="5"
-                       WidthRequest="100" 
-                       HorizontalOptions="End"
-                       VerticalOptions="Center" />
-            </StackLayout>
-            <StackLayout Orientation="Horizontal" Padding="8,0,8,0" VerticalOptions="Center">
-                <Label Text="{Binding TotalWithDiscount, StringFormat='Итого со скидкой: {0}'}"
-                       WidthRequest="240"
-                       VerticalOptions="Center" />
+        <Picker Grid.Row="1" ItemsSource="{Binding Buyers}" 
+                Title="Клиент"
+                ItemDisplayBinding="{Binding Name}" SelectedItem="{Binding Buyer}" />
 
-                <CheckBox IsChecked="{Binding IsPaid}" 
-                              VerticalOptions="Center" />
+        <ScrollView Grid.Row="2" Padding="4">
+            <CollectionView ItemsSource="{Binding InvoiceDetailViewModels}" 
+                            SelectionMode="Single" SelectedItem="{Binding InvoiceDetailViewModel}" >
+                <CollectionView.Header>
+                    <Grid ColumnSpacing="4" BackgroundColor="White">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="10*"/>
+                            <ColumnDefinition Width="3*"/>
+                            <ColumnDefinition Width="2*"/>
+                            <ColumnDefinition Width="4*"/>
+                        </Grid.ColumnDefinitions>
 
-                <Label Text="Расчет"
-                           VerticalOptions="Center">
-                    <Label.GestureRecognizers>
-                        <TapGestureRecognizer Command="{Binding SetIsPaidCommand}" />
-                    </Label.GestureRecognizers>
-                </Label>
+                        <Label Grid.Column="0" Text="№" />
+                        <Label Grid.Column="1" Text="Наименование" />
+                        <Label Grid.Column="2" Text="Кол-во" />
+                        <Label Grid.Column="3" Text="Цена" />
+                        <Label Grid.Column="4" Text="Сумма" HorizontalOptions="End" />
+                    </Grid>
+                </CollectionView.Header>
+                <CollectionView.ItemTemplate>
+                    <DataTemplate>
+                        <Grid ColumnSpacing="4" >
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="10*" />
+                                <ColumnDefinition Width="3*" />
+                                <ColumnDefinition Width="2*" />
+                                <ColumnDefinition Width="4*" />
+                            </Grid.ColumnDefinitions>
 
-            </StackLayout>
-        </VerticalStackLayout>
+                            <Label Grid.Column="0" Text="{Binding Number}" />
+                            <Label Grid.Column="1" Text="{Binding ProductViewModel}" />
+                            <Label Grid.Column="2" Text="{Binding Count}" />
+                            <Label Grid.Column="3" Text="{Binding Price}" />
+                            <Label Grid.Column="4" Text="{Binding Total}" HorizontalOptions="End" />
+                        </Grid>
+                    </DataTemplate>
+                </CollectionView.ItemTemplate>
+            </CollectionView>
+        </ScrollView>
 
-        <HorizontalStackLayout Padding="8" Spacing="10" HorizontalOptions="End">
-            <Button Text="Сохранить"
-                    Command="{Binding SaveCommand}"/>
-            <Button Text="Сброс"
-                    Clicked="Reset" />
+        <Grid Grid.Row="3">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="3*"/>
+                <ColumnDefinition Width="*"/>
+                <ColumnDefinition Width="Auto"/>
+                <ColumnDefinition Width="Auto"/>
+            </Grid.ColumnDefinitions>
 
-            <Button Text="Добавить товар"
-                    Command="{Binding AddCommand}" />
+            <Label Grid.Column="0" Text="{Binding Total, StringFormat='Итого: {0:N0}'}" VerticalOptions="Center" />
 
-        </HorizontalStackLayout>
-    </VerticalStackLayout>
+            <Entry Grid.Column="1" Text="{Binding Discount, Converter={StaticResource StringToDoubleConverter}}" 
+                   Placeholder="Скидка" Keyboard="Numeric" MaxLength="5" />
+
+            <CheckBox Grid.Column="2" IsChecked="{Binding IsPaid}" />
+
+            <Label Grid.Column="3" Text="Расчет" VerticalOptions="Center" >
+                <Label.GestureRecognizers>
+                    <TapGestureRecognizer Command="{Binding SetIsPaidCommand}" />
+                </Label.GestureRecognizers>
+            </Label>
+
+        </Grid>
+
+        <Label Grid.Row="4" Text="{Binding TotalWithDiscount, StringFormat='Итого со скидкой: {0:N0}'}" />
+
+        <Grid Grid.Row="5" ColumnSpacing="10" >
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="2*" />
+                <ColumnDefinition Width="Auto" />
+            </Grid.ColumnDefinitions>
+
+            <Button Grid.Column="0" Text="Сброс" Clicked="Reset" />
+            <Button Grid.Column="1" Text="Сохранить" Command="{Binding SaveCommand}" HorizontalOptions="End" />
+            <Button Grid.Column="2" Text="Добавить товар" Command="{Binding AddCommand}"  />
+        </Grid>
+    </Grid>
 </ContentPage>

@@ -55,7 +55,7 @@ public sealed class HomeViewModel : INotifyPropertyChanged {
         get => _invoice.Discount;
         set {
             if (_invoice.Discount != value) {
-                _invoice.Discount = value ?? 0;
+                _invoice.Discount = value;
                 OnPropertyChanged();
                 TotalWithDiscount = GetTotalWithDiscount();
             }

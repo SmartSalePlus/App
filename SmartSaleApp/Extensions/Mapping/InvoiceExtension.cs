@@ -12,7 +12,7 @@ internal static class InvoiceExtension {
             src.Id,
             DateOnly.FromDateTime(src.Date),
             src.Total,
-            src.Discount,
+            src.Discount ?? 0,
             src.TotalWithDiscount,
             src.IsPaid,
             src.Buyer.Id,

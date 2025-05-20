@@ -12,54 +12,69 @@
         <c:StringToDoubleConverter x:Key="StringToDoubleConverter"  />
     </ContentPage.Resources>
 
-    <Frame BackgroundColor="White" 
-           VerticalOptions="Center" 
-           HorizontalOptions="Center" 
-           WidthRequest="350" 
-           HeightRequest="400" 
-           CornerRadius="10">
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*" />
+            <RowDefinition Height="2*" />
+            <RowDefinition Height="*" />
+        </Grid.RowDefinitions>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="*" />
+            <ColumnDefinition Width="6*" />
+            <ColumnDefinition Width="*" />
+        </Grid.ColumnDefinitions>
 
-        <StackLayout>
-            <Grid Padding="0,0,0,30" >
-                <Label Text="{Binding Number, StringFormat='№ {0}'}"
-                       FontSize="18"
-                       VerticalOptions="End" />
+        <Frame Grid.Row="1" Grid.Column="1" BackgroundColor="White">
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="8*"/>
+                </Grid.RowDefinitions>
 
-                <Button Text="X"
-                        Clicked="Close"
-                        WidthRequest="40" 
-                        HeightRequest="40"
-                        HorizontalOptions="End" />
+                <Grid Grid.Row="0">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="6*" />
+                        <ColumnDefinition Width="Auto" />
+                    </Grid.ColumnDefinitions>
+
+                    <Label Grid.Column="0" Text="{Binding Number, StringFormat='№ {0}'}" />
+                    <Button Grid.Column="1" Text="X" Clicked="Close" />
+                </Grid>
+
+                <Grid Grid.Row="1">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="*"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="*"/>
+                        <RowDefinition Height="Auto"/>
+                    </Grid.RowDefinitions>
+
+                    <Picker Grid.Row="1" ItemsSource="{Binding ProductViewModels}" 
+                            ItemDisplayBinding="{Binding .}"
+                            SelectedItem="{Binding ProductViewModel}"
+                            Title="Наименование" />
+
+                    <Entry Grid.Row="2" Text="{Binding Count, Converter={StaticResource StringToIntConverter}}" 
+                           Placeholder="Кол-во" 
+                           Keyboard="Numeric"
+                           MaxLength="3"/>
+
+                    <Entry Grid.Row="3" Text="{Binding Price, Converter={StaticResource StringToDoubleConverter}}"
+                           Placeholder="Цена" 
+                           Keyboard="Numeric"
+                           MaxLength="4"/>
+
+                    <Label Grid.Row="4" Text="{Binding Total, StringFormat='Итого: {0:N0}'}" 
+                           Margin="0,20,0,0"
+                           HorizontalOptions="Center" />
+
+                    <Button Grid.Row="6" Text="Сохранить"
+                            Command="{Binding SaveCommand}"  />
+                </Grid>
             </Grid>
-
-            <Picker ItemsSource="{Binding ProductViewModels}" 
-                    ItemDisplayBinding="{Binding .}" 
-                    SelectedItem="{Binding ProductViewModel}"            
-                    Title="Наименование"
-                    FontSize="18" />
-
-            <Entry Text="{Binding Count, Converter={StaticResource StringToIntConverter}}" 
-                   Placeholder="Кол-во" 
-                   Keyboard="Numeric"
-                   FontSize="18"
-                   MaxLength="3"/>
-
-            <Entry Text="{Binding Price, Converter={StaticResource StringToDoubleConverter}}" 
-                   Placeholder="Цена" 
-                   Keyboard="Numeric"
-                   FontSize="18"
-                   MaxLength="4"/>
-
-            <Label Text="{Binding Total, StringFormat='Итого: {0:N0}'}" 
-                   Margin="0,20,0,0"
-                   HorizontalOptions="Center"
-                   FontSize="18" />
-
-            <Button Text="Сохранить" 
-                    Margin="0,50,0,0"
-                    Command="{Binding SaveCommand}"
-                    FontSize="18" />
-
-        </StackLayout>
-    </Frame>
+        </Frame>
+    </Grid>
 </ContentPage>
