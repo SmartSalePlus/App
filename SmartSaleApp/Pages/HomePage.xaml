@@ -30,7 +30,7 @@
             <CollectionView ItemsSource="{Binding InvoiceDetailViewModels}" 
                             SelectionMode="Single" SelectedItem="{Binding InvoiceDetailViewModel}" >
                 <CollectionView.Header>
-                    <Grid ColumnSpacing="4" BackgroundColor="White">
+                    <Grid ColumnSpacing="4">
                         <Grid.ColumnDefinitions>
                             <ColumnDefinition Width="*"/>
                             <ColumnDefinition Width="10*"/>
@@ -81,14 +81,13 @@
             <Entry Grid.Column="1" Text="{Binding Discount, Converter={StaticResource StringToDoubleConverter}}" 
                    Placeholder="Скидка" Keyboard="Numeric" MaxLength="5" />
 
-            <CheckBox Grid.Column="2" IsChecked="{Binding IsPaid}" />
-
-            <Label Grid.Column="3" Text="Расчет" VerticalOptions="Center" >
+            <Label Grid.Column="2" Padding="20,0,0,0" Text="Расчет" VerticalOptions="Center" >
                 <Label.GestureRecognizers>
                     <TapGestureRecognizer Command="{Binding SetIsPaidCommand}" />
                 </Label.GestureRecognizers>
             </Label>
 
+            <CheckBox Grid.Column="3" IsChecked="{Binding IsPaid}" />
         </Grid>
 
         <Label Grid.Row="4" Text="{Binding TotalWithDiscount, StringFormat='Итого со скидкой: {0:N0}'}" />

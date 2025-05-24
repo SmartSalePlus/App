@@ -19,16 +19,7 @@ public sealed class HomeViewModel : INotifyPropertyChanged {
     public ICommand SetIsPaidCommand { get; }
     public ObservableCollection<Buyer> Buyers { get; private set; } = [];
     public ObservableCollection<InvoiceDetailViewModel> InvoiceDetailViewModels { get; } = [];
-
-    public DateTime Date {
-        get => _invoice.Date;
-        set {
-            if (_invoice.Date != value) {
-                _invoice.Date = value;
-                OnPropertyChanged();
-            }
-        }
-    }
+    public DateTime Date { get; set; }
 
     public Buyer? Buyer {
         get => _invoice.Buyer;
@@ -110,7 +101,8 @@ public sealed class HomeViewModel : INotifyPropertyChanged {
         _buyerApiClient = buyerApiClient;
         _invoiceApiClient = invoiceApiClient;
         _navigation = navigation;
-        _invoice = new() { Date = DateTime.Now };
+        Date = DateTime.Now;
+        _invoice = new();
         _ = GetBuyersAsync();
         _number = 1;
         AddCommand = new Command(async () => await AddAsync());
@@ -154,6 +146,7 @@ public sealed class HomeViewModel : INotifyPropertyChanged {
 
     private async Task SaveAsync() {
         _invoice.InvoiceDetailViewModels = InvoiceDetailViewModels;
+        _invoice.Date = DateOnly.FromDateTime(Date);
         await _invoiceApiClient.AddAsync(_invoice.ToModel());
         Saved?.Invoke();
     }

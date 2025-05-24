@@ -1,5 +1,7 @@
 ﻿using Refit;
 using SmartSaleApp.Models.Data;
+using SmartSaleApp.Models.InputParameters;
+using SmartSaleApp.Models.View;
 
 namespace SmartSaleApp.Interfaces.ApiClients;
 
@@ -16,11 +18,14 @@ public interface IInvoiceApiClient {
     [Get("/get/{id}")]
     Task<Invoice> GetAsync(int id);
 
-    [Get("/get/{date}")]
-    Task<IEnumerable<Invoice>> GetAsync(DateOnly date);
+    [Post("/get")]
+    Task<IEnumerable<InvoiceViewModel>> GetAsync(InvoiceInputParameter parameter);
 
-    [Get("/getByBuyer/{buyerId}")]
-    Task<IEnumerable<Invoice>> GetByBuyerAsync(int buyerId);
+    //[Get("/get/date/{date}")]
+    //Task<IEnumerable<InvoiceViewModel>> GetAsync([Query(Format = "yyyy-MM-dd")] DateOnly date);
+
+    //[Get("/getByBuyer/{buyerId}")]
+    //Task<IEnumerable<Invoice>> GetByBuyerAsync(int buyerId);
 
     [Get("/get")]
     Task<IEnumerable<Invoice>> GetAsync();

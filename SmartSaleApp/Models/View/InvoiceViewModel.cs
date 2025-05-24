@@ -4,7 +4,7 @@ namespace SmartSaleApp.Models.View;
 
 public sealed class InvoiceViewModel {
     public int Id { get; set; }
-    public DateTime Date { get; set; }
+    public DateOnly Date { get; set; }
     public double Total { get; set; }
     public double? Discount { get; set; }
     public double TotalWithDiscount { get; set; }

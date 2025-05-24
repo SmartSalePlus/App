@@ -11,12 +11,8 @@
             <ShellContent ContentTemplate="{DataTemplate local:HomePage}" Route="HomePage" />
         </Tab>
 
-        <Tab Title="HomeModalPage">
-            <ShellContent ContentTemplate="{DataTemplate local:HomeModalPage}" Route="HomeModalPage" />
-        </Tab>
-        
-        <Tab Title="Home">
-            <ShellContent ContentTemplate="{DataTemplate local:HomePage}" Route="HomePage" />
+        <Tab Title="History">
+            <ShellContent ContentTemplate="{DataTemplate local:HistoryPage}" Route="HistoryPage" />
         </Tab>
     </TabBar>
 

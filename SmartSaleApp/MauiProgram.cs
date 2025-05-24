@@ -20,9 +20,11 @@ public static class MauiProgram {
 
         builder.Services.AddScoped<HomePage>();
         builder.Services.AddScoped<HomeModalPage>();
+        builder.Services.AddScoped<HistoryPage>();
 
         builder.Services.AddScoped<HomeViewModel>();
         builder.Services.AddScoped<HomeModalViewModel>();
+        builder.Services.AddScoped<HistoryViewModel>();
 
         builder.Services.AddScoped<IHomeViewModelFactory, HomeViewModelFactory>();
         builder.Services.AddScoped<IHomeModalViewModelFactory, HomeModalViewModelFactory>();
