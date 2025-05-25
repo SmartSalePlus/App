@@ -14,7 +14,7 @@ public sealed class HistoryViewModel : INotifyPropertyChanged {
 
     public ICommand LoadCommand { get; }
     public ICommand SetIsPaidCommand { get; }
-    public ObservableCollection<Buyer> Buyers { get; private set; } = [];
+    public ObservableCollection<Buyer> Buyers { get; } = [];
     public ObservableCollection<InvoiceViewModel> InvoiceViewModels { get; private set; } = [];
     public DateTime DateBegin {
         get => _dateBegin;

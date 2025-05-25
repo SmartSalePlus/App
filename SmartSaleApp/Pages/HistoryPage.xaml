@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="utf-8" ?>
 <ContentPage xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
-             x:Class="SmartSaleApp.Pages.HistoryPage" >
+             x:Class="SmartSaleApp.Pages.HistoryPage"
+             Title="История">
 
     <Grid Padding="20">
         <Grid.RowDefinitions>
@@ -43,56 +44,39 @@
                     <TapGestureRecognizer Command="{Binding SetIsPaidCommand}" />
                 </Label.GestureRecognizers>
             </Label>
-            
+
             <CheckBox Grid.Column="3" IsChecked="{Binding IsPaid}" />
         </Grid>
-        
-        <ScrollView Grid.Row="2" Padding="4">
-            <CollectionView ItemsSource="{Binding InvoiceViewModels}" 
-                    SelectionMode="Single" >
-                <CollectionView.ItemsLayout>
-                    <LinearItemsLayout Orientation="Vertical" ItemSpacing="20" />
-                </CollectionView.ItemsLayout>
-                <CollectionView.Header>
-                    <Grid ColumnSpacing="4" Padding="4,10,4,10">
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="*"/>
-                            <ColumnDefinition Width="2*"/>
-                            <ColumnDefinition Width="*"/>
-                            <ColumnDefinition Width="0.6*"/>
-                        </Grid.ColumnDefinitions>
 
-                        <Label Grid.Column="0" Text="Дата" />
-                        <Label Grid.Column="1" Text="Клиент" />
-                        <Label Grid.Column="2" Text="Сумма" />
-                        <Label Grid.Column="3" Text="Расчет" />
-                    </Grid>
-                </CollectionView.Header>
-                <CollectionView.ItemTemplate>
-                    <DataTemplate>
-                        <Border>
-                            <Border.StrokeShape>
-                                <RoundRectangle CornerRadius="10"/>
-                            </Border.StrokeShape>
-                            
-                            <Grid ColumnSpacing="4" Padding="4,10,4,10" >
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="*"/>
-                                    <ColumnDefinition Width="2*"/>
-                                    <ColumnDefinition Width="*"/>
-                                    <ColumnDefinition Width="0.6*"/>
-                                </Grid.ColumnDefinitions>
+        <CollectionView Grid.Row="2" ItemsSource="{Binding InvoiceViewModels}" SelectionMode="Single" >
+            <CollectionView.ItemsLayout>
+                <LinearItemsLayout Orientation="Vertical" ItemSpacing="20" />
+            </CollectionView.ItemsLayout>
+            
+            <CollectionView.ItemTemplate>
+                <DataTemplate>
+                    <Border>
+                        <Border.StrokeShape>
+                            <RoundRectangle CornerRadius="10"/>
+                        </Border.StrokeShape>
 
-                                <Label Grid.Column="0" Text="{Binding Date}" VerticalOptions="Center" />
-                                <Label Grid.Column="1" Text="{Binding Buyer.Name}" VerticalOptions="Center" />
-                                <Label Grid.Column="2" Text="{Binding TotalWithDiscount, StringFormat='{0:N0}'}" VerticalOptions="Center" />
-                                <CheckBox Grid.Column="3" IsChecked="{Binding IsPaid}" IsEnabled="False" />
-                            </Grid>
-                        </Border>
-                    </DataTemplate>
-                </CollectionView.ItemTemplate>
-            </CollectionView>
-        </ScrollView>
+                        <Grid ColumnSpacing="4" Padding="4,10,4,10" >
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="2*"/>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="0.6*"/>
+                            </Grid.ColumnDefinitions>
+
+                            <Label Grid.Column="0" Text="{Binding Date}" VerticalOptions="Center" />
+                            <Label Grid.Column="1" Text="{Binding Buyer.Name}" VerticalOptions="Center" />
+                            <Label Grid.Column="2" Text="{Binding TotalWithDiscount, StringFormat='{0:N0}'}" VerticalOptions="Center" />
+                            <CheckBox Grid.Column="3" IsChecked="{Binding IsPaid}" IsEnabled="False" />
+                        </Grid>
+                    </Border>
+                </DataTemplate>
+            </CollectionView.ItemTemplate>
+        </CollectionView>
 
         <Button Grid.Row="3" Text="Загрузить" Command="{Binding LoadCommand}" />
     </Grid>

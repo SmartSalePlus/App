@@ -14,6 +14,10 @@
         <Tab Title="History">
             <ShellContent ContentTemplate="{DataTemplate local:HistoryPage}" Route="HistoryPage" />
         </Tab>
+
+        <Tab Title="Buyer">
+            <ShellContent ContentTemplate="{DataTemplate local:BuyerPage}" Route="BuyerPage" />
+        </Tab>
     </TabBar>
 
 </Shell>
