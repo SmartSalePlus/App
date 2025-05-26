@@ -3,7 +3,7 @@ using SmartSaleApp.Models.View;
 
 namespace SmartSaleApp.Extensions.Mapping;
 internal static class ProductExtension {
-    public static ProductViewModel ToViewModel(this Product product) {
+    public static ProductDto ToDto(this Product product) {
         return new() {
             Id = product.Id,
             Name = product.Name,
@@ -13,7 +13,7 @@ internal static class ProductExtension {
         };
     }
 
-    public static IEnumerable<ProductViewModel> ToViewModel(this IEnumerable<Product> products) {
-        return products.Select(ToViewModel);
+    public static IEnumerable<ProductDto> ToDto(this IEnumerable<Product> products) {
+        return products.Select(ToDto);
     }
 }

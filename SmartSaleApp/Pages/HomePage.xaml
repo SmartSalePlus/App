@@ -26,8 +26,8 @@
                 Title="Клиент"
                 ItemDisplayBinding="{Binding Name}" SelectedItem="{Binding Buyer}" />
 
-        <CollectionView Grid.Row="2" Margin='4' ItemsSource="{Binding InvoiceDetailViewModels}"
-                        SelectionMode="Single" SelectedItem="{Binding InvoiceDetailViewModel}" >
+        <CollectionView Grid.Row="2" Margin='4' ItemsSource="{Binding InvoiceDetailDtos}"
+                        SelectionMode="Single" SelectedItem="{Binding InvoiceDetailDto}" >
             <CollectionView.Header>
                 <Grid ColumnSpacing="4">
                     <Grid.ColumnDefinitions>
@@ -57,7 +57,7 @@
                         </Grid.ColumnDefinitions>
 
                         <Label Grid.Column="0" Text="{Binding Number}" />
-                        <Label Grid.Column="1" Text="{Binding ProductViewModel}" />
+                        <Label Grid.Column="1" Text="{Binding ProductDto}" />
                         <Label Grid.Column="2" Text="{Binding Count}" />
                         <Label Grid.Column="3" Text="{Binding Price}" />
                         <Label Grid.Column="4" Text="{Binding Total}" HorizontalOptions="End" />

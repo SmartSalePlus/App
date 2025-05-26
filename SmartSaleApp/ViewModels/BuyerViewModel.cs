@@ -11,7 +11,6 @@ public sealed class BuyerViewModel : INotifyPropertyChanged {
     public event PropertyChangedEventHandler? PropertyChanged;
     public ICommand LoadCommand { get; }
     public ICommand AddCommand { get; }
-    public ICommand EditCommand { get; }
     //public ICommand DeleteCommand { get; }
     public ObservableCollection<Buyer> Buyers { get; private set; } = [];
 
@@ -32,7 +31,6 @@ public sealed class BuyerViewModel : INotifyPropertyChanged {
         _ = GetAsync();
         LoadCommand = new Command(async () => await GetAsync());
         AddCommand = new Command(async () => await AddAsync());
-        EditCommand = new Command<Buyer>(async (buyer) => await EditAsync(buyer));
         //DeleteCommand = new Command<Buyer>(async (buyer) => await DeleteAsync(buyer));
     }
 
@@ -78,7 +76,7 @@ public sealed class BuyerViewModel : INotifyPropertyChanged {
 
         string title = string.IsNullOrWhiteSpace(initialValue) ? "Добавление клиента" : "Редактирование клиента";
 
-        return await page.DisplayPromptAsync(title, "Введите имя:", "OK", "Отмена", initialValue: initialValue);
+        return await page.DisplayPromptAsync(title, "Введите имя:", "Готово", "Отмена", initialValue: initialValue);
     }
 
     //private async Task DeleteAsync(Buyer buyer) {

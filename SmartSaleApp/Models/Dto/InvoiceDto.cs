@@ -2,7 +2,7 @@
 
 namespace SmartSaleApp.Models.View;
 
-public sealed class InvoiceViewModel {
+public sealed class InvoiceDto {
     public int Id { get; set; }
     public DateOnly Date { get; set; }
     public double Total { get; set; }
@@ -10,5 +10,5 @@ public sealed class InvoiceViewModel {
     public double TotalWithDiscount { get; set; }
     public bool IsPaid { get; set; }
     public Buyer? Buyer { get; set; }
-    public IEnumerable<InvoiceDetailViewModel> InvoiceDetailViewModels { get; set; } = [];
+    public IEnumerable<InvoiceDetailDto> InvoiceDetailDtos{ get; set; } = [];
 }

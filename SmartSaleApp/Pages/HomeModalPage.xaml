@@ -52,9 +52,9 @@
                         <RowDefinition Height="Auto"/>
                     </Grid.RowDefinitions>
 
-                    <Picker Grid.Row="1" ItemsSource="{Binding ProductViewModels}" 
+                    <Picker Grid.Row="1" ItemsSource="{Binding ProductDtos}" 
                             ItemDisplayBinding="{Binding .}"
-                            SelectedItem="{Binding ProductViewModel}"
+                            SelectedItem="{Binding ProductDto}"
                             Title="Наименование" />
 
                     <Entry Grid.Row="2" Text="{Binding Count, Converter={StaticResource StringToIntConverter}}" 

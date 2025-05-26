@@ -48,7 +48,7 @@
             <CheckBox Grid.Column="3" IsChecked="{Binding IsPaid}" />
         </Grid>
 
-        <CollectionView Grid.Row="2" ItemsSource="{Binding InvoiceViewModels}" SelectionMode="Single" >
+        <CollectionView Grid.Row="2" Margin="0,20,0,0" ItemsSource="{Binding InvoiceDtos}" SelectionMode="Single" >
             <CollectionView.ItemsLayout>
                 <LinearItemsLayout Orientation="Vertical" ItemSpacing="20" />
             </CollectionView.ItemsLayout>

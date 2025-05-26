@@ -18,24 +18,24 @@ public sealed class HomeViewModel : INotifyPropertyChanged {
     public ICommand SaveCommand { get; }
     public ICommand SetIsPaidCommand { get; }
     public ObservableCollection<Buyer> Buyers { get; private set; } = [];
-    public ObservableCollection<InvoiceDetailViewModel> InvoiceDetailViewModels { get; } = [];
+    public ObservableCollection<InvoiceDetailDto> InvoiceDetailDtos { get; } = [];
     public DateTime Date { get; set; }
 
     public Buyer? Buyer {
-        get => _invoice.Buyer;
+        get => _invoiceDto.Buyer;
         set {
-            if (_invoice.Buyer != value) {
-                _invoice.Buyer = value;
+            if (_invoiceDto.Buyer != value) {
+                _invoiceDto.Buyer = value;
                 OnPropertyChanged();
             }
         }
     }
 
     public double? Total {
-        get => _invoice.Total;
+        get => _invoiceDto.Total;
         set {
-            if (_invoice.Total != value) {
-                _invoice.Total = value ?? 0;
+            if (_invoiceDto.Total != value) {
+                _invoiceDto.Total = value ?? 0;
                 OnPropertyChanged();
                 TotalWithDiscount = GetTotalWithDiscount();
             }
@@ -43,10 +43,10 @@ public sealed class HomeViewModel : INotifyPropertyChanged {
     }
 
     public double? Discount {
-        get => _invoice.Discount;
+        get => _invoiceDto.Discount;
         set {
-            if (_invoice.Discount != value) {
-                _invoice.Discount = value;
+            if (_invoiceDto.Discount != value) {
+                _invoiceDto.Discount = value;
                 OnPropertyChanged();
                 TotalWithDiscount = GetTotalWithDiscount();
             }
@@ -54,10 +54,10 @@ public sealed class HomeViewModel : INotifyPropertyChanged {
     }
 
     public double? TotalWithDiscount {
-        get => _invoice.TotalWithDiscount;
+        get => _invoiceDto.TotalWithDiscount;
         set {
-            if (_invoice.TotalWithDiscount != value) {
-                _invoice.TotalWithDiscount = value ?? 0;
+            if (_invoiceDto.TotalWithDiscount != value) {
+                _invoiceDto.TotalWithDiscount = value ?? 0;
                 OnPropertyChanged();
                 ((Command)SaveCommand).ChangeCanExecute();
             }
@@ -65,16 +65,16 @@ public sealed class HomeViewModel : INotifyPropertyChanged {
     }
 
     public bool IsPaid {
-        get => _invoice.IsPaid;
+        get => _invoiceDto.IsPaid;
         set {
-            if (_invoice.IsPaid != value) {
-                _invoice.IsPaid = value;
+            if (_invoiceDto.IsPaid != value) {
+                _invoiceDto.IsPaid = value;
                 OnPropertyChanged();
             }
         }
     }
 
-    public InvoiceDetailViewModel? InvoiceDetailViewModel {
+    public InvoiceDetailDto? InvoiceDetailDto {
         get => null;
         set {
             if (value != null) {
@@ -88,7 +88,7 @@ public sealed class HomeViewModel : INotifyPropertyChanged {
     private readonly IBuyerApiClient _buyerApiClient;
     private readonly IInvoiceApiClient _invoiceApiClient;
     private readonly INavigation _navigation;
-    private readonly InvoiceViewModel _invoice;
+    private readonly InvoiceDto _invoiceDto;
     private int _number;
 
     public HomeViewModel(
@@ -102,7 +102,7 @@ public sealed class HomeViewModel : INotifyPropertyChanged {
         _invoiceApiClient = invoiceApiClient;
         _navigation = navigation;
         Date = DateTime.Now;
-        _invoice = new();
+        _invoiceDto = new();
         _ = GetBuyersAsync();
         _number = 1;
         AddCommand = new Command(async () => await AddAsync());
@@ -120,34 +120,34 @@ public sealed class HomeViewModel : INotifyPropertyChanged {
         await OpenModalPageAsync(new() { Number = _number }, true);
     }
 
-    private async Task EditAsync(InvoiceDetailViewModel invoiceDetailViewModel) {
-        await OpenModalPageAsync(invoiceDetailViewModel, false);
+    private async Task EditAsync(InvoiceDetailDto invoiceDetailDto) {
+        await OpenModalPageAsync(invoiceDetailDto, false);
     }
 
-    private async Task OpenModalPageAsync(InvoiceDetailViewModel invoiceDetailViewModel, bool isAdd) {
-        var cloneInvoiceDetailViewModel = invoiceDetailViewModel.Clone();
-        var homeModalViewModel = _homeModalViewModelFactory.Create(_navigation, cloneInvoiceDetailViewModel, isAdd);
+    private async Task OpenModalPageAsync(InvoiceDetailDto invoiceDetailDto, bool isAdd) {
+        var cloneInvoiceDetailDto = invoiceDetailDto.Clone();
+        var homeModalViewModel = _homeModalViewModelFactory.Create(_navigation, cloneInvoiceDetailDto, isAdd);
         homeModalViewModel.Saved += OnAdded;
         var homeModalPage = new HomeModalPage(homeModalViewModel);
         await _navigation.PushModalAsync(homeModalPage);
     }
 
-    private void OnAdded(InvoiceDetailViewModel invoiceDetailViewModel, bool isAdd) {
+    private void OnAdded(InvoiceDetailDto invoiceDetailDto, bool isAdd) {
         if (isAdd) {
-            InvoiceDetailViewModels.Add(invoiceDetailViewModel);
+            InvoiceDetailDtos.Add(invoiceDetailDto);
             _number++;
         }
         else {
-            var index = invoiceDetailViewModel.Number - 1;
-            InvoiceDetailViewModels[index] = invoiceDetailViewModel;
+            var index = invoiceDetailDto.Number - 1;
+            InvoiceDetailDtos[index] = invoiceDetailDto;
         }
-        Total = InvoiceDetailViewModels.Sum(x => x.Total);
+        Total = InvoiceDetailDtos.Sum(x => x.Total);
     }
 
     private async Task SaveAsync() {
-        _invoice.InvoiceDetailViewModels = InvoiceDetailViewModels;
-        _invoice.Date = DateOnly.FromDateTime(Date);
-        await _invoiceApiClient.AddAsync(_invoice.ToModel());
+        _invoiceDto.InvoiceDetailDtos = InvoiceDetailDtos;
+        _invoiceDto.Date = DateOnly.FromDateTime(Date);
+        await _invoiceApiClient.AddAsync(_invoiceDto.ToModel());
         Saved?.Invoke();
     }
 

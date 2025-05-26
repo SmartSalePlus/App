@@ -15,7 +15,7 @@ public sealed class HistoryViewModel : INotifyPropertyChanged {
     public ICommand LoadCommand { get; }
     public ICommand SetIsPaidCommand { get; }
     public ObservableCollection<Buyer> Buyers { get; } = [];
-    public ObservableCollection<InvoiceViewModel> InvoiceViewModels { get; private set; } = [];
+    public ObservableCollection<InvoiceDto> InvoiceDtos { get; private set; } = [];
     public DateTime DateBegin {
         get => _dateBegin;
         set {
@@ -85,8 +85,8 @@ public sealed class HistoryViewModel : INotifyPropertyChanged {
         }
         var parameter = new InvoiceInputParameter(DateOnly.FromDateTime(DateBegin), DateOnly.FromDateTime(DateEnd), buyerId, IsPaid);
         var invoices = await _invoiceApiClient.GetAsync(parameter);
-        InvoiceViewModels = new(invoices);
-        OnPropertyChanged(nameof(InvoiceViewModels));
+        InvoiceDtos = new(invoices);
+        OnPropertyChanged(nameof(InvoiceDtos));
     }
 
     private void OnPropertyChanged([CallerMemberName] string prop = "") {

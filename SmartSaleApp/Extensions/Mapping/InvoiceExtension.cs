@@ -4,7 +4,7 @@ using SmartSaleApp.Models.View;
 namespace SmartSaleApp.Extensions.Mapping;
 
 internal static class InvoiceExtension {
-    public static Invoice ToModel(this InvoiceViewModel src) {
+    public static Invoice ToModel(this InvoiceDto src) {
         ArgumentNullException.ThrowIfNull(src);
         ArgumentNullException.ThrowIfNull(src.Buyer);
 
@@ -16,7 +16,7 @@ internal static class InvoiceExtension {
             src.TotalWithDiscount,
             src.IsPaid,
             src.Buyer.Id,
-            src.InvoiceDetailViewModels.ToModel()
+            src.InvoiceDetailDtos.ToModel()
         ); 
     }
 }

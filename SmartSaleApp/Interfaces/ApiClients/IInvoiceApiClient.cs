@@ -19,13 +19,7 @@ public interface IInvoiceApiClient {
     Task<Invoice> GetAsync(int id);
 
     [Post("/get")]
-    Task<IEnumerable<InvoiceViewModel>> GetAsync(InvoiceInputParameter parameter);
-
-    //[Get("/get/date/{date}")]
-    //Task<IEnumerable<InvoiceViewModel>> GetAsync([Query(Format = "yyyy-MM-dd")] DateOnly date);
-
-    //[Get("/getByBuyer/{buyerId}")]
-    //Task<IEnumerable<Invoice>> GetByBuyerAsync(int buyerId);
+    Task<IEnumerable<InvoiceDto>> GetAsync(InvoiceInputParameter parameter);
 
     [Get("/get")]
     Task<IEnumerable<Invoice>> GetAsync();
