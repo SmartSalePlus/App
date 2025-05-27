@@ -97,7 +97,7 @@
                 <ColumnDefinition Width="Auto" />
             </Grid.ColumnDefinitions>
 
-            <Button Grid.Column="0" Text="Сброс" Clicked="Reset" />
+            <Button Grid.Column="0" Text="Сбросить" Clicked="Reset" />
             <Button Grid.Column="1" Text="Сохранить" Command="{Binding SaveCommand}" HorizontalOptions="End" />
             <Button Grid.Column="2" Text="Добавить товар" Command="{Binding AddCommand}"  />
         </Grid>

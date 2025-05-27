@@ -34,6 +34,7 @@ public static class MauiProgram {
 
         builder.Services.AddScoped<IHomeViewModelFactory, HomeViewModelFactory>();
         builder.Services.AddScoped<IHomeModalViewModelFactory, HomeModalViewModelFactory>();
+        builder.Services.AddScoped<IHistoryViewModelFactory, HistoryViewModelFactory>();
         builder.Services.AddScoped<IProductViewModelFactory, ProductViewModelFactory>();
         builder.Services.AddScoped<IProductModalViewModelFactory, ProductModalViewModelFactory>();
 

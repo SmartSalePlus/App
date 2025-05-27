@@ -6,13 +6,16 @@
 
     <Grid Padding="20">
         <Grid.RowDefinitions>
+            <RowDefinition Height="*" />
             <RowDefinition Height="Auto" />
             <RowDefinition Height="Auto" />
-            <RowDefinition Height="8*" />
+            <RowDefinition Height="10*" />
             <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
 
-        <Grid Grid.Row="0" ColumnSpacing="10" Padding="4">
+        <Label Grid.Row="0" Text="{Binding DateTimeLoad, StringFormat='Загружены в: {0}'}" />
+
+        <Grid Grid.Row="1" ColumnSpacing="10" Padding="4">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="Auto"/>
                 <ColumnDefinition Width="2*"/>
@@ -27,7 +30,7 @@
             <DatePicker Grid.Column="4" Date="{Binding DateEnd}" Format="dd-MM-yyyy" />
         </Grid>
 
-        <Grid Grid.Row="1">
+        <Grid Grid.Row="2">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="4*"/>
                 <ColumnDefinition Width="*"/>
@@ -48,7 +51,7 @@
             <CheckBox Grid.Column="3" IsChecked="{Binding IsPaid}" />
         </Grid>
 
-        <CollectionView Grid.Row="2" Margin="0,20,0,0" ItemsSource="{Binding InvoiceDtos}" SelectionMode="Single" >
+        <CollectionView Grid.Row="3" Margin="0,20,0,0" ItemsSource="{Binding InvoiceDtos}" SelectionMode="Single" >
             <CollectionView.ItemsLayout>
                 <LinearItemsLayout Orientation="Vertical" ItemSpacing="20" />
             </CollectionView.ItemsLayout>
@@ -78,6 +81,15 @@
             </CollectionView.ItemTemplate>
         </CollectionView>
 
-        <Button Grid.Row="3" Text="Загрузить" Command="{Binding LoadCommand}" />
+        <Grid Grid.Row="4" ColumnSpacing="10">
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto" />
+                <ColumnDefinition Width="*" />
+                <ColumnDefinition Width="2*" />
+            </Grid.ColumnDefinitions>
+
+            <Button Grid.Column="0" Text="Сбросить" Clicked="Reset" />
+            <Button Grid.Column="2" Text="Загрузить" Command="{Binding LoadCommand}" />
+        </Grid>
     </Grid>
 </ContentPage>

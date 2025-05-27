@@ -11,11 +11,12 @@ namespace SmartSaleApp.ViewModels;
 
 public sealed class HistoryViewModel : INotifyPropertyChanged {
     public event PropertyChangedEventHandler? PropertyChanged;
-
     public ICommand LoadCommand { get; }
     public ICommand SetIsPaidCommand { get; }
     public ObservableCollection<Buyer> Buyers { get; } = [];
     public ObservableCollection<InvoiceDto> InvoiceDtos { get; private set; } = [];
+    public DateTime DateTimeLoad { get; private set; }
+
     public DateTime DateBegin {
         get => _dateBegin;
         set {
@@ -67,6 +68,8 @@ public sealed class HistoryViewModel : INotifyPropertyChanged {
         Buyers.Insert(0, new(0, "Все клиенты"));
         Buyer = Buyers[0];
         _ = GetBuyersAsync();
+        _ = GetInvoicesAsync();
+        DateTimeLoad = DateTime.Now;
         LoadCommand = new Command(async () => await GetInvoicesAsync());
         SetIsPaidCommand = new Command(() => IsPaid = !IsPaid);
     }
@@ -75,7 +78,7 @@ public sealed class HistoryViewModel : INotifyPropertyChanged {
         var buyers = await _buyerApiClient.GetAsync();
         foreach(var buyer in buyers) {
             Buyers.Add(buyer);
-        }        
+        }
     }
 
     private async Task GetInvoicesAsync() {
@@ -87,6 +90,8 @@ public sealed class HistoryViewModel : INotifyPropertyChanged {
         var invoices = await _invoiceApiClient.GetAsync(parameter);
         InvoiceDtos = new(invoices);
         OnPropertyChanged(nameof(InvoiceDtos));
+        DateTimeLoad = DateTime.Now;
+        OnPropertyChanged(nameof(DateTimeLoad));
     }
 
     private void OnPropertyChanged([CallerMemberName] string prop = "") {

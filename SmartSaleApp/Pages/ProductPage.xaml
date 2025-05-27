@@ -11,7 +11,7 @@
             <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
 
-        <Label Grid.Row="0" Text="{Binding DateTimeLoad, StringFormat='Обновлено в: {0}'}" />
+        <Label Grid.Row="0" Text="{Binding DateTimeLoad, StringFormat='Загружены в: {0}'}" />
 
         <CollectionView Grid.Row="1" ItemsSource="{Binding ProductDtos}" SelectionMode="Single" SelectedItem="{Binding ProductDto}" >
             <CollectionView.ItemsLayout>
@@ -48,8 +48,8 @@
                 <ColumnDefinition Width="2*" />
             </Grid.ColumnDefinitions>
 
-            <Button Grid.Column="0" Text="Добавить" Command="{Binding AddCommand}" />
-            <Button Grid.Column="2" Text="Загрузить" Command="{Binding LoadCommand}" />
+            <Button Grid.Column="0" Text="Загрузить" Command="{Binding LoadCommand}" />
+            <Button Grid.Column="2" Text="Добавить" Command="{Binding AddCommand}" />
         </Grid>
     </Grid>
     
