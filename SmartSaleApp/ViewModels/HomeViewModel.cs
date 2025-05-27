@@ -27,6 +27,7 @@ public sealed class HomeViewModel : INotifyPropertyChanged {
             if (_invoiceDto.Buyer != value) {
                 _invoiceDto.Buyer = value;
                 OnPropertyChanged();
+                ((Command)SaveCommand).ChangeCanExecute();
             }
         }
     }
@@ -121,12 +122,12 @@ public sealed class HomeViewModel : INotifyPropertyChanged {
     }
 
     private async Task EditAsync(InvoiceDetailDto invoiceDetailDto) {
-        await OpenModalPageAsync(invoiceDetailDto, false);
+        var cloneInvoiceDetailDto = invoiceDetailDto.Clone();
+        await OpenModalPageAsync(cloneInvoiceDetailDto, false);
     }
 
     private async Task OpenModalPageAsync(InvoiceDetailDto invoiceDetailDto, bool isAdd) {
-        var cloneInvoiceDetailDto = invoiceDetailDto.Clone();
-        var homeModalViewModel = _homeModalViewModelFactory.Create(_navigation, cloneInvoiceDetailDto, isAdd);
+        var homeModalViewModel = _homeModalViewModelFactory.Create(_navigation, invoiceDetailDto, isAdd);
         homeModalViewModel.Saved += OnAdded;
         var homeModalPage = new HomeModalPage(homeModalViewModel);
         await _navigation.PushModalAsync(homeModalPage);
@@ -156,7 +157,7 @@ public sealed class HomeViewModel : INotifyPropertyChanged {
     }
 
     private bool IsValid() {
-        return TotalWithDiscount > 0;
+        return Buyer != null && TotalWithDiscount > 0;
     }
 
     private void OnPropertyChanged([CallerMemberName] string prop = "") {

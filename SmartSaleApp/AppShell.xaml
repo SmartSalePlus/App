@@ -11,11 +11,15 @@
             <ShellContent ContentTemplate="{DataTemplate local:HomePage}" Route="HomePage" />
         </Tab>
 
-        <Tab Title="History">
+        <Tab Title="История">
             <ShellContent ContentTemplate="{DataTemplate local:HistoryPage}" Route="HistoryPage" />
         </Tab>
 
-        <Tab Title="Buyer">
+        <Tab Title="Товары">
+            <ShellContent ContentTemplate="{DataTemplate local:ProductPage}" Route="ProductPage" />
+        </Tab>
+
+        <Tab Title="Клиенты">
             <ShellContent ContentTemplate="{DataTemplate local:BuyerPage}" Route="BuyerPage" />
         </Tab>
     </TabBar>

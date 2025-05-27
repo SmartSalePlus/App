@@ -13,6 +13,7 @@ public sealed class BuyerViewModel : INotifyPropertyChanged {
     public ICommand AddCommand { get; }
     //public ICommand DeleteCommand { get; }
     public ObservableCollection<Buyer> Buyers { get; private set; } = [];
+    public DateTime DateTimeLoad { get; private set; }
 
     public Buyer? Buyer {
         get => null;
@@ -29,12 +30,21 @@ public sealed class BuyerViewModel : INotifyPropertyChanged {
     public BuyerViewModel(IBuyerApiClient buyerApiClient) {
         _buyerApiClient = buyerApiClient;
         _ = GetAsync();
+        DateTimeLoad = DateTime.Now;
         LoadCommand = new Command(async () => await GetAsync());
         AddCommand = new Command(async () => await AddAsync());
         //DeleteCommand = new Command<Buyer>(async (buyer) => await DeleteAsync(buyer));
     }
 
-    public async Task AddAsync() {
+    private async Task GetAsync() {
+        var buyers = await _buyerApiClient.GetAsync();
+        Buyers = new(buyers);
+        OnPropertyChanged(nameof(Buyers));
+        DateTimeLoad = DateTime.Now;
+        OnPropertyChanged(nameof(DateTimeLoad));
+    }
+
+    private async Task AddAsync() {
         var name = await DisplayPromptAsync();
 
         if (string.IsNullOrWhiteSpace(name)) {
@@ -44,12 +54,6 @@ public sealed class BuyerViewModel : INotifyPropertyChanged {
         var buyer = new Buyer(0, name);
         await _buyerApiClient.AddAsync(buyer);
         await GetAsync();
-    }
-
-    private async Task GetAsync() {
-        var buyers = await _buyerApiClient.GetAsync();
-        Buyers = new(buyers);
-        OnPropertyChanged(nameof(Buyers));
     }
 
     private async Task EditAsync(Buyer buyer) {

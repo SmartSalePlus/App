@@ -99,7 +99,7 @@ public sealed class HomeModalViewModel : INotifyPropertyChanged {
     }
 
     private bool IsValid() {
-        return ProductDto is not null && Count > 0 && Price > 0;
+        return ProductDto != null && Count > 0 && Price > 0;
     }
 
     private void OnPropertyChanged([CallerMemberName] string prop = "") {

@@ -21,6 +21,8 @@ internal static class InvoiceDetailExtension {
     }
 
     public static InvoiceDetailDto Clone(this InvoiceDetailDto src) {
+        ArgumentNullException.ThrowIfNull(src);
+
         return new() {
             Number = src.Number,
             Count = src.Count,

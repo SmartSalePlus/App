@@ -2,10 +2,10 @@ using SmartSaleApp.ViewModels;
 
 namespace SmartSaleApp.Pages;
 
-public partial class HomeModalPage : ContentPage {
-    public HomeModalPage(HomeModalViewModel homeModalViewModel) {
+public partial class ProductModalPage : ContentPage {
+    public ProductModalPage(ProductModalViewModel productModalViewModel) {
         InitializeComponent();
-        BindingContext = homeModalViewModel;
+        BindingContext = productModalViewModel;
     }
 
     private void Close(object sender, EventArgs e) {

@@ -22,14 +22,20 @@ public static class MauiProgram {
         builder.Services.AddScoped<HomeModalPage>();
         builder.Services.AddScoped<HistoryPage>();
         builder.Services.AddScoped<BuyerPage>();
+        builder.Services.AddScoped<ProductPage>();
+        builder.Services.AddScoped<ProductModalPage>();
 
         builder.Services.AddScoped<HomeViewModel>();
         builder.Services.AddScoped<HomeModalViewModel>();
         builder.Services.AddScoped<HistoryViewModel>();
         builder.Services.AddScoped<BuyerViewModel>();
+        builder.Services.AddScoped<ProductViewModel>();
+        builder.Services.AddScoped<ProductModalViewModel>();
 
         builder.Services.AddScoped<IHomeViewModelFactory, HomeViewModelFactory>();
         builder.Services.AddScoped<IHomeModalViewModelFactory, HomeModalViewModelFactory>();
+        builder.Services.AddScoped<IProductViewModelFactory, ProductViewModelFactory>();
+        builder.Services.AddScoped<IProductModalViewModelFactory, ProductModalViewModelFactory>();
 
 #if DEBUG
         builder.Logging.AddDebug();

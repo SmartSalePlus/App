@@ -3,17 +3,41 @@ using SmartSaleApp.Models.View;
 
 namespace SmartSaleApp.Extensions.Mapping;
 internal static class ProductExtension {
-    public static ProductDto ToDto(this Product product) {
+    public static Product ToModel(this ProductDto src) {
+        ArgumentNullException.ThrowIfNull(src);
+
+        return new(
+            src.Id,
+            src.Name,
+            src.Count ?? 0,
+            src.CountInPackage ?? 0,
+            src.Price ?? 0
+        );
+    }
+
+    public static ProductDto ToDto(this Product src) {
         return new() {
-            Id = product.Id,
-            Name = product.Name,
-            Count = product.Count,
-            CountInPackage = product.CountInPackage,
-            Price = product.Price
+            Id = src.Id,
+            Name = src.Name,
+            Count = src.Count,
+            CountInPackage = src.CountInPackage,
+            Price = src.Price
         };
     }
 
-    public static IEnumerable<ProductDto> ToDto(this IEnumerable<Product> products) {
-        return products.Select(ToDto);
+    public static IEnumerable<ProductDto> ToDto(this IEnumerable<Product> src) {
+        return src.Select(ToDto);
+    }
+
+    public static ProductDto Clone(this ProductDto src) {
+        ArgumentNullException.ThrowIfNull(src);
+
+        return new() {
+            Id = src.Id,
+            Name = src.Name,
+            Count = src.Count,
+            CountInPackage = src.CountInPackage,
+            Price = src.Price
+        };
     }
 }

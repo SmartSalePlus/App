@@ -7,11 +7,14 @@
 
     <Grid Padding="20">
         <Grid.RowDefinitions>
-            <RowDefinition Height="8*" />
+            <RowDefinition Height="*" />
+            <RowDefinition Height="10*" />
             <RowDefinition Height="Auto" />
         </Grid.RowDefinitions>
 
-        <CollectionView Grid.Row="0" ItemsSource="{Binding Buyers}" SelectionMode="Single" SelectedItem="{Binding Buyer}" >
+        <Label Grid.Row="0" Text="{Binding DateTimeLoad, StringFormat='Обновлено в: {0}'}" />
+        
+        <CollectionView Grid.Row="1" ItemsSource="{Binding Buyers}" SelectionMode="Single" SelectedItem="{Binding Buyer}" >
             <CollectionView.ItemsLayout>
                 <LinearItemsLayout Orientation="Vertical" ItemSpacing="20" />
             </CollectionView.ItemsLayout>
@@ -37,7 +40,7 @@
             </CollectionView.ItemTemplate>
         </CollectionView>
 
-        <Grid Grid.Row="1" ColumnSpacing="10">
+        <Grid Grid.Row="2" ColumnSpacing="10">
             <Grid.ColumnDefinitions>
                 <ColumnDefinition Width="Auto" />
                 <ColumnDefinition Width="*" />
