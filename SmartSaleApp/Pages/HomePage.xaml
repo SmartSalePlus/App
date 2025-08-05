@@ -26,41 +26,41 @@
                 Title="Клиент"
                 ItemDisplayBinding="{Binding Name}" SelectedItem="{Binding Buyer}" />
 
-        <CollectionView Grid.Row="2" Margin='4' ItemsSource="{Binding InvoiceDetailDtos}"
+        <CollectionView Grid.Row="2" Margin='4,10,0,0' ItemsSource="{Binding InvoiceDetailDtos}"
                         SelectionMode="Single" SelectedItem="{Binding InvoiceDetailDto}" >
+            <CollectionView.ItemsLayout>
+                <LinearItemsLayout Orientation="Vertical" ItemSpacing="10" />
+            </CollectionView.ItemsLayout>
+            
             <CollectionView.Header>
                 <Grid ColumnSpacing="4">
                     <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="*"/>
                         <ColumnDefinition Width="10*"/>
                         <ColumnDefinition Width="3*"/>
                         <ColumnDefinition Width="2*"/>
                         <ColumnDefinition Width="4*"/>
                     </Grid.ColumnDefinitions>
 
-                    <Label Grid.Column="0" Text="№" />
-                    <Label Grid.Column="1" Text="Наименование" />
-                    <Label Grid.Column="2" Text="Кол-во" />
-                    <Label Grid.Column="3" Text="Цена" />
-                    <Label Grid.Column="4" Text="Сумма" HorizontalOptions="End" />
+                    <Label Grid.Column="0" Text="Наименование" />
+                    <Label Grid.Column="1" Text="Кол-во" />
+                    <Label Grid.Column="2" Text="Цена" />
+                    <Label Grid.Column="3" Text="Сумма" HorizontalOptions="End" />
                 </Grid>
             </CollectionView.Header>
             <CollectionView.ItemTemplate>
                 <DataTemplate>
                     <Grid ColumnSpacing="4" >
                         <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="*" />
                             <ColumnDefinition Width="10*" />
                             <ColumnDefinition Width="3*" />
                             <ColumnDefinition Width="2*" />
                             <ColumnDefinition Width="4*" />
                         </Grid.ColumnDefinitions>
 
-                        <Label Grid.Column="0" Text="{Binding Number}" />
-                        <Label Grid.Column="1" Text="{Binding ProductDto}" />
-                        <Label Grid.Column="2" Text="{Binding Count}" />
-                        <Label Grid.Column="3" Text="{Binding Price}" />
-                        <Label Grid.Column="4" Text="{Binding Total}" HorizontalOptions="End" />
+                        <Label Grid.Column="0" Text="{Binding ProductDto}" />
+                        <Label Grid.Column="1" Text="{Binding Count}" />
+                        <Label Grid.Column="2" Text="{Binding Price}" />
+                        <Label Grid.Column="3" Text="{Binding Total}" HorizontalOptions="End" />
                     </Grid>
                 </DataTemplate>
             </CollectionView.ItemTemplate>

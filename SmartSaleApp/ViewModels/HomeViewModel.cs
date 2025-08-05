@@ -90,7 +90,7 @@ public sealed class HomeViewModel : INotifyPropertyChanged {
     private readonly IInvoiceApiClient _invoiceApiClient;
     private readonly INavigation _navigation;
     private readonly InvoiceDto _invoiceDto;
-    private int _number;
+    private int _indexInvoiceDetailDto;
 
     public HomeViewModel(
         IHomeModalViewModelFactory homeModalViewModelFactory,
@@ -105,7 +105,6 @@ public sealed class HomeViewModel : INotifyPropertyChanged {
         Date = DateTime.Now;
         _invoiceDto = new();
         _ = GetBuyersAsync();
-        _number = 1;
         AddCommand = new Command(async () => await AddAsync());
         SaveCommand = new Command(async () => await SaveAsync(), IsValid);
         SetIsPaidCommand = new Command(() => IsPaid = !IsPaid);
@@ -118,10 +117,11 @@ public sealed class HomeViewModel : INotifyPropertyChanged {
     }
 
     private async Task AddAsync() {
-        await OpenModalPageAsync(new() { Number = _number }, true);
+        await OpenModalPageAsync(new(), true);
     }
 
     private async Task EditAsync(InvoiceDetailDto invoiceDetailDto) {
+        _indexInvoiceDetailDto = InvoiceDetailDtos.IndexOf(invoiceDetailDto);
         var cloneInvoiceDetailDto = invoiceDetailDto.Clone();
         await OpenModalPageAsync(cloneInvoiceDetailDto, false);
     }
@@ -129,6 +129,7 @@ public sealed class HomeViewModel : INotifyPropertyChanged {
     private async Task OpenModalPageAsync(InvoiceDetailDto invoiceDetailDto, bool isAdd) {
         var homeModalViewModel = _homeModalViewModelFactory.Create(_navigation, invoiceDetailDto, isAdd);
         homeModalViewModel.Saved += OnAdded;
+        homeModalViewModel.Removed += OnRemoved;
         var homeModalPage = new HomeModalPage(homeModalViewModel);
         await _navigation.PushModalAsync(homeModalPage);
     }
@@ -136,13 +137,15 @@ public sealed class HomeViewModel : INotifyPropertyChanged {
     private void OnAdded(InvoiceDetailDto invoiceDetailDto, bool isAdd) {
         if (isAdd) {
             InvoiceDetailDtos.Add(invoiceDetailDto);
-            _number++;
         }
         else {
-            var index = invoiceDetailDto.Number - 1;
-            InvoiceDetailDtos[index] = invoiceDetailDto;
+            InvoiceDetailDtos[_indexInvoiceDetailDto] = invoiceDetailDto;
         }
         Total = InvoiceDetailDtos.Sum(x => x.Total);
+    }
+
+    private void OnRemoved() {
+        InvoiceDetailDtos.RemoveAt(_indexInvoiceDetailDto);
     }
 
     private async Task SaveAsync() {

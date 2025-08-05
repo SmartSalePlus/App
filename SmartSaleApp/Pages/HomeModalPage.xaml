@@ -37,7 +37,7 @@
                         <ColumnDefinition Width="Auto" />
                     </Grid.ColumnDefinitions>
 
-                    <Label Grid.Column="0" Text="{Binding Number, StringFormat='№ {0}'}" />
+                    <Label Grid.Column="0" Text="{Binding Title}" VerticalOptions="Center" />
                     <Button Grid.Column="1" Text="X" Clicked="Close" />
                 </Grid>
 
@@ -71,8 +71,15 @@
                            Margin="0,20,0,0"
                            HorizontalOptions="Center" />
 
-                    <Button Grid.Row="6" Text="Сохранить"
-                            Command="{Binding SaveCommand}"  />
+                    <Grid Grid.Row="6" ColumnSpacing="10">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="Auto"/>
+                            <ColumnDefinition Width="2*"/>
+                        </Grid.ColumnDefinitions>
+
+                        <Button Grid.Column="0" Text="Удалить" IsVisible="{Binding IsVisibleRemoveButton}" Command="{Binding RemoveCommand}" />
+                        <Button Grid.Column="1" Text="Сохранить" Command="{Binding SaveCommand}" />
+                    </Grid>
                 </Grid>
             </Grid>
         </Frame>

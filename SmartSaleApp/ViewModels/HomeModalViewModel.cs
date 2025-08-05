@@ -11,9 +11,12 @@ namespace SmartSaleApp.ViewModels;
 public sealed class HomeModalViewModel : INotifyPropertyChanged {
     public event PropertyChangedEventHandler? PropertyChanged;
     public event Action<InvoiceDetailDto, bool>? Saved;
-    public int Number => _invoiceDetailDto.Number;
+    public event Action? Removed;
     public ICommand SaveCommand { get; }
+    public ICommand RemoveCommand { get; }
     public ObservableCollection<ProductDto> ProductDtos { get; private set; } = [];
+    public string Title => _isAdd ? "Добавление товара" : "Редактирование товара";
+    public bool IsVisibleRemoveButton => !_isAdd;
 
     public int? Count {
         get => _invoiceDetailDto.Count;
@@ -79,6 +82,7 @@ public sealed class HomeModalViewModel : INotifyPropertyChanged {
         _isAdd = isAdd;
         _ = GetProductsAsync();
         SaveCommand = new Command(async () => await SaveAsync(), IsValid);
+        RemoveCommand = new Command(async () => await Remove());
     }
 
     private async Task GetProductsAsync() {
@@ -90,6 +94,11 @@ public sealed class HomeModalViewModel : INotifyPropertyChanged {
 
     private async Task SaveAsync() {
         Saved?.Invoke(_invoiceDetailDto, _isAdd);
+        await _navigation.PopModalAsync();
+    }
+
+    private async Task Remove() {
+        Removed?.Invoke();
         await _navigation.PopModalAsync();
     }
 

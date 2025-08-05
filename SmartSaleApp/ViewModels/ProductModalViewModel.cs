@@ -11,7 +11,6 @@ public sealed class ProductModalViewModel : INotifyPropertyChanged {
     public event PropertyChangedEventHandler? PropertyChanged;
     public event Action? Saved;
     public ICommand SaveCommand { get; }
-
     public string Title => _isAdd ? "Добавление товара" : "Редактирование товара";
 
     public string Name {

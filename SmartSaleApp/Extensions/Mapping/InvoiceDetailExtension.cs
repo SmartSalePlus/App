@@ -24,7 +24,6 @@ internal static class InvoiceDetailExtension {
         ArgumentNullException.ThrowIfNull(src);
 
         return new() {
-            Number = src.Number,
             Count = src.Count,
             Price = src.Price,
             Total = src.Total,
