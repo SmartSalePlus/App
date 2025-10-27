@@ -1,24 +1,23 @@
 ﻿using SmartSaleApp.Extensions.Mapping;
+using SmartSaleApp.Helpers;
 using SmartSaleApp.Interfaces.ApiClients;
-using SmartSaleApp.Interfaces.Factory;
 using SmartSaleApp.Models.Data;
 using SmartSaleApp.Models.View;
 using SmartSaleApp.Pages;
 using System.Collections.ObjectModel;
-using System.ComponentModel;
-using System.Runtime.CompilerServices;
 using System.Windows.Input;
 
 namespace SmartSaleApp.ViewModels;
 
-public sealed class HomeViewModel : INotifyPropertyChanged {
-    public event PropertyChangedEventHandler? PropertyChanged;
-    public event Action? Saved;
+public sealed class HomeViewModel : ViewModelBase {
     public ICommand AddCommand { get; }
+    public ICommand EditCommand { get; }
     public ICommand SaveCommand { get; }
+    public ICommand DeleteCommand { get; }
+    public ICommand ResetCommand { get; }
     public ICommand SetIsPaidCommand { get; }
     public ObservableCollection<Buyer> Buyers { get; private set; } = [];
-    public ObservableCollection<InvoiceDetailDto> InvoiceDetailDtos { get; } = [];
+    public ObservableCollection<InvoiceDetailDto> InvoiceDetailDtos { get; private set; } = [];
     public DateTime Date { get; set; }
 
     public Buyer? Buyer {
@@ -32,11 +31,11 @@ public sealed class HomeViewModel : INotifyPropertyChanged {
         }
     }
 
-    public double? Total {
+    public double Total {
         get => _invoiceDto.Total;
         set {
             if (_invoiceDto.Total != value) {
-                _invoiceDto.Total = value ?? 0;
+                _invoiceDto.Total = value;
                 OnPropertyChanged();
                 TotalWithDiscount = GetTotalWithDiscount();
             }
@@ -54,11 +53,11 @@ public sealed class HomeViewModel : INotifyPropertyChanged {
         }
     }
 
-    public double? TotalWithDiscount {
+    public double TotalWithDiscount {
         get => _invoiceDto.TotalWithDiscount;
         set {
             if (_invoiceDto.TotalWithDiscount != value) {
-                _invoiceDto.TotalWithDiscount = value ?? 0;
+                _invoiceDto.TotalWithDiscount = value;
                 OnPropertyChanged();
                 ((Command)SaveCommand).ChangeCanExecute();
             }
@@ -75,95 +74,95 @@ public sealed class HomeViewModel : INotifyPropertyChanged {
         }
     }
 
-    public InvoiceDetailDto? InvoiceDetailDto {
-        get => null;
-        set {
-            if (value != null) {
-                _ = EditAsync(value);
-                OnPropertyChanged();
-            }
-        }
-    }
-
-    private readonly IHomeModalViewModelFactory _homeModalViewModelFactory;
     private readonly IBuyerApiClient _buyerApiClient;
     private readonly IInvoiceApiClient _invoiceApiClient;
-    private readonly INavigation _navigation;
+    private readonly IProductApiClient _productApiClient;
     private readonly InvoiceDto _invoiceDto;
-    private int _indexInvoiceDetailDto;
+    private int _index;
+    private IEnumerable<ProductDto> _productDtos = [];
 
     public HomeViewModel(
-        IHomeModalViewModelFactory homeModalViewModelFactory,
         IBuyerApiClient buyerApiClient,
         IInvoiceApiClient invoiceApiClient,
-        INavigation navigation
+        IProductApiClient productApiClient
     ) {
-        _homeModalViewModelFactory = homeModalViewModelFactory;
         _buyerApiClient = buyerApiClient;
         _invoiceApiClient = invoiceApiClient;
-        _navigation = navigation;
+        _productApiClient = productApiClient;
         Date = DateTime.Now;
         _invoiceDto = new();
-        _ = GetBuyersAsync();
-        AddCommand = new Command(async () => await AddAsync());
+        _ = LoadAsync();
+        AddCommand = new Command(async () => await OpenModalPageAsync(new(), Add));
+        EditCommand = new Command<InvoiceDetailDto>(async (x) => { _index = InvoiceDetailDtos.IndexOf(x); await OpenModalPageAsync(x.Clone(), Update); });
         SaveCommand = new Command(async () => await SaveAsync(), IsValid);
+        DeleteCommand = new Command<InvoiceDetailDto>(Delete);
+        ResetCommand = new Command(async () => await ConfirmResetAsync());
         SetIsPaidCommand = new Command(() => IsPaid = !IsPaid);
     }
 
-    private async Task GetBuyersAsync() {
-        var buyers = await _buyerApiClient.GetAsync();
-        Buyers = new(buyers);
-        OnPropertyChanged(nameof(Buyers));
+    public async Task LoadAsync() {
+        await ExecuteAsync(async () => {
+            var buyers = await _buyerApiClient.GetAsync();
+            Buyers = new(buyers);
+            OnPropertyChanged(nameof(Buyers));
+            _productDtos = (await _productApiClient.GetAsync()).ToDto();
+        });
     }
 
-    private async Task AddAsync() {
-        await OpenModalPageAsync(new(), true);
+    private async Task OpenModalPageAsync(InvoiceDetailDto invoiceDetailDto, Action<InvoiceDetailDto> saveHandler) {
+        HomeModalViewModel homeModalViewModel = new(invoiceDetailDto, _productDtos, saveHandler);
+        await PageHelper.Current.Navigation.PushModalAsync(new HomeModalPage(homeModalViewModel));
     }
 
-    private async Task EditAsync(InvoiceDetailDto invoiceDetailDto) {
-        _indexInvoiceDetailDto = InvoiceDetailDtos.IndexOf(invoiceDetailDto);
-        var cloneInvoiceDetailDto = invoiceDetailDto.Clone();
-        await OpenModalPageAsync(cloneInvoiceDetailDto, false);
-    }
-
-    private async Task OpenModalPageAsync(InvoiceDetailDto invoiceDetailDto, bool isAdd) {
-        var homeModalViewModel = _homeModalViewModelFactory.Create(_navigation, invoiceDetailDto, isAdd);
-        homeModalViewModel.Saved += OnAdded;
-        homeModalViewModel.Removed += OnRemoved;
-        var homeModalPage = new HomeModalPage(homeModalViewModel);
-        await _navigation.PushModalAsync(homeModalPage);
-    }
-
-    private void OnAdded(InvoiceDetailDto invoiceDetailDto, bool isAdd) {
-        if (isAdd) {
-            InvoiceDetailDtos.Add(invoiceDetailDto);
-        }
-        else {
-            InvoiceDetailDtos[_indexInvoiceDetailDto] = invoiceDetailDto;
-        }
+    private void Add(InvoiceDetailDto invoiceDetailDto) {
+        InvoiceDetailDtos.Add(invoiceDetailDto);
         Total = InvoiceDetailDtos.Sum(x => x.Total);
     }
 
-    private void OnRemoved() {
-        InvoiceDetailDtos.RemoveAt(_indexInvoiceDetailDto);
+    private void Update(InvoiceDetailDto invoiceDetailDto) {
+        InvoiceDetailDtos[_index] = invoiceDetailDto;
+        Total = InvoiceDetailDtos.Sum(x => x.Total);
+    }
+
+    private void Delete(InvoiceDetailDto invoiceDetailDto) {
+        InvoiceDetailDtos.Remove(invoiceDetailDto);
+    }
+
+    private async Task ConfirmResetAsync() {
+        bool isReset = await PageHelper.Current.DisplayAlert("Подтвердить действие", "Вы хотите все сбросить?", "Да", "Нет");
+
+        if (isReset) {
+            await ResetAsync();
+        }
+    }
+
+    private async Task ResetAsync() {
+        InvoiceDetailDtos = [];
+        OnPropertyChanged(nameof(InvoiceDetailDtos));
+        Date = DateTime.Now;
+        OnPropertyChanged(nameof(Date));
+        Buyer = null;
+        Total = 0;
+        Discount = null;
+        TotalWithDiscount = 0;
+        IsPaid = false;
+        await LoadAsync();
     }
 
     private async Task SaveAsync() {
-        _invoiceDto.InvoiceDetailDtos = InvoiceDetailDtos;
-        _invoiceDto.Date = DateOnly.FromDateTime(Date);
-        await _invoiceApiClient.AddAsync(_invoiceDto.ToModel());
-        Saved?.Invoke();
+        await ExecuteAsync(async () => {
+            _invoiceDto.InvoiceDetailDtos = InvoiceDetailDtos;
+            _invoiceDto.Date = DateOnly.FromDateTime(Date);
+            await _invoiceApiClient.AddAsync(_invoiceDto.ToModel());
+            await ResetAsync();
+        });
     }
 
-    private double? GetTotalWithDiscount() {
-        return Math.Round((Total ?? 0) - (Discount ?? 0));
+    private double GetTotalWithDiscount() {
+        return Math.Round(Total - (Discount ?? 0));
     }
 
     private bool IsValid() {
         return Buyer != null && TotalWithDiscount > 0;
-    }
-
-    private void OnPropertyChanged([CallerMemberName] string prop = "") {
-        PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(prop));
     }
 }

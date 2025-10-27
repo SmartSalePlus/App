@@ -1,5 +1,6 @@
 ﻿using SmartSaleApp.Extensions.Mapping;
-using SmartSaleApp.Interfaces.ApiClients;
+using SmartSaleApp.Helpers;
+using SmartSaleApp.Models.Data;
 using SmartSaleApp.Models.View;
 using System.ComponentModel;
 using System.Runtime.CompilerServices;
@@ -9,9 +10,7 @@ namespace SmartSaleApp.ViewModels;
 
 public sealed class ProductModalViewModel : INotifyPropertyChanged {
     public event PropertyChangedEventHandler? PropertyChanged;
-    public event Action? Saved;
     public ICommand SaveCommand { get; }
-    public string Title => _isAdd ? "Добавление товара" : "Редактирование товара";
 
     public string Name {
         get => _productDto.Name;
@@ -57,33 +56,21 @@ public sealed class ProductModalViewModel : INotifyPropertyChanged {
         }
     }
 
-    private readonly IProductApiClient _productApiClient;
-    private readonly INavigation _navigation;
     private readonly ProductDto _productDto;
-    private readonly bool _isAdd;
+    private readonly Func<Product, Task> _saveHandler;
 
     public ProductModalViewModel(
-        IProductApiClient productApiClient,
-        INavigation navigation,
         ProductDto productDto,
-        bool isAdd
+        Func<Product, Task> saveHandler
     ) {
-        _productApiClient = productApiClient;
-        _navigation = navigation;
         _productDto = productDto;
-        _isAdd = isAdd;
+        _saveHandler = saveHandler;
         SaveCommand = new Command(async () => await SaveAsync(), IsValid);
     }
 
     private async Task SaveAsync() {
-        if (_isAdd) {
-            await _productApiClient.AddAsync(_productDto.ToModel());
-        }
-        else {
-            await _productApiClient.UpdateAsync(_productDto.ToModel());
-        }
-        Saved?.Invoke();
-        await _navigation.PopModalAsync();
+        await PageHelper.Current.Navigation.PopModalAsync();
+        await _saveHandler.Invoke(_productDto.ToModel());
     }
 
     private bool IsValid() {

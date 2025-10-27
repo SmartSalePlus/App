@@ -1,5 +1,4 @@
-﻿using SmartSaleApp.Extensions.Mapping;
-using SmartSaleApp.Interfaces.ApiClients;
+﻿using SmartSaleApp.Helpers;
 using SmartSaleApp.Models.View;
 using System.Collections.ObjectModel;
 using System.ComponentModel;
@@ -10,13 +9,8 @@ namespace SmartSaleApp.ViewModels;
 
 public sealed class HomeModalViewModel : INotifyPropertyChanged {
     public event PropertyChangedEventHandler? PropertyChanged;
-    public event Action<InvoiceDetailDto, bool>? Saved;
-    public event Action? Removed;
     public ICommand SaveCommand { get; }
-    public ICommand RemoveCommand { get; }
     public ObservableCollection<ProductDto> ProductDtos { get; private set; } = [];
-    public string Title => _isAdd ? "Добавление товара" : "Редактирование товара";
-    public bool IsVisibleRemoveButton => !_isAdd;
 
     public int? Count {
         get => _invoiceDetailDto.Count;
@@ -42,11 +36,11 @@ public sealed class HomeModalViewModel : INotifyPropertyChanged {
         }
     }
 
-    public double? Total {
+    public double Total {
         get => _invoiceDetailDto.Total;
         set {
             if (_invoiceDetailDto.Total != value) {
-                _invoiceDetailDto.Total = value ?? 0;
+                _invoiceDetailDto.Total = value;
                 OnPropertyChanged();
             }
         }
@@ -65,46 +59,29 @@ public sealed class HomeModalViewModel : INotifyPropertyChanged {
         }
     }
 
-    private readonly IProductApiClient _productApiClient;
-    private readonly INavigation _navigation;
-    private InvoiceDetailDto _invoiceDetailDto;
-    private readonly bool _isAdd;
+    private readonly InvoiceDetailDto _invoiceDetailDto;
+    private readonly Action<InvoiceDetailDto> _saveHandler;
 
     public HomeModalViewModel(
-        IProductApiClient productApiClient,
-        INavigation navigation,
         InvoiceDetailDto invoiceDetailDto,
-        bool isAdd
+        IEnumerable<ProductDto> productDtos,
+        Action<InvoiceDetailDto> saveHandler
     ) {
-        _productApiClient = productApiClient;
-        _navigation = navigation;
         _invoiceDetailDto = invoiceDetailDto;
-        _isAdd = isAdd;
-        _ = GetProductsAsync();
+        ProductDtos = new(productDtos);
+        _saveHandler = saveHandler;
         SaveCommand = new Command(async () => await SaveAsync(), IsValid);
-        RemoveCommand = new Command(async () => await Remove());
-    }
-
-    private async Task GetProductsAsync() {
-        var products = await _productApiClient.GetAsync();
-        ProductDtos = new(products.ToDto());
-        OnPropertyChanged(nameof(ProductDtos));
         ProductDto = ProductDtos.FirstOrDefault(x => x.Id == _invoiceDetailDto.ProductDto?.Id);
     }
 
     private async Task SaveAsync() {
-        Saved?.Invoke(_invoiceDetailDto, _isAdd);
-        await _navigation.PopModalAsync();
+        await PageHelper.Current.Navigation.PopModalAsync();
+        _saveHandler?.Invoke(_invoiceDetailDto);
     }
 
-    private async Task Remove() {
-        Removed?.Invoke();
-        await _navigation.PopModalAsync();
-    }
-
-    private double? GetTotal() {
-        var total = ProductDto?.CountInPackage * Count * Price;
-        return total.HasValue ? Math.Round(total.Value) : total;
+    private double GetTotal() {
+        double total = (ProductDto?.CountInPackage * Count * Price) ?? 0;
+        return Math.Round(total);
     }
 
     private bool IsValid() {

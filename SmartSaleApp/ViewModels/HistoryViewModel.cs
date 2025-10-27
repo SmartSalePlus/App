@@ -3,19 +3,15 @@ using SmartSaleApp.Models.Data;
 using SmartSaleApp.Models.InputParameters;
 using SmartSaleApp.Models.View;
 using System.Collections.ObjectModel;
-using System.ComponentModel;
-using System.Runtime.CompilerServices;
 using System.Windows.Input;
 
 namespace SmartSaleApp.ViewModels;
 
-public sealed class HistoryViewModel : INotifyPropertyChanged {
-    public event PropertyChangedEventHandler? PropertyChanged;
+public sealed class HistoryViewModel : ViewModelBase {
     public ICommand LoadCommand { get; }
     public ICommand SetIsPaidCommand { get; }
     public ObservableCollection<Buyer> Buyers { get; } = [];
     public ObservableCollection<InvoiceDto> InvoiceDtos { get; private set; } = [];
-    public DateTime DateTimeLoad { get; private set; }
 
     public DateTime DateBegin {
         get => _dateBegin;
@@ -42,7 +38,8 @@ public sealed class HistoryViewModel : INotifyPropertyChanged {
         }
     }
 
-    public Buyer? Buyer { get; set; }
+    public Buyer Buyer { get; set; }
+
     public bool IsPaid {
         get => _isPaid;
         set {
@@ -65,13 +62,17 @@ public sealed class HistoryViewModel : INotifyPropertyChanged {
         _buyerApiClient = buyerApiClient;
         DateBegin = DateTime.Now;
         DateEnd = DateTime.Now;
-        Buyers.Insert(0, new(0, "Все клиенты"));
-        Buyer = Buyers[0];
-        _ = GetBuyersAsync();
-        _ = GetInvoicesAsync();
-        DateTimeLoad = DateTime.Now;
-        LoadCommand = new Command(async () => await GetInvoicesAsync());
+        Buyers.Add(new(0, "Все клиенты"));
+        Buyer = Buyers.First();
+        LoadCommand = new Command(async () => await ExecuteAsync(GetInvoicesAsync));
         SetIsPaidCommand = new Command(() => IsPaid = !IsPaid);
+    }
+
+    public async Task LoadAsync() {
+        await ExecuteAsync(async () => {
+            await GetBuyersAsync();
+            await GetInvoicesAsync();
+        });
     }
 
     private async Task GetBuyersAsync() {
@@ -82,19 +83,9 @@ public sealed class HistoryViewModel : INotifyPropertyChanged {
     }
 
     private async Task GetInvoicesAsync() {
-        var buyerId = Buyer?.Id;
-        if (buyerId == 0) {
-            buyerId = null;
-        }
-        var parameter = new InvoiceInputParameter(DateOnly.FromDateTime(DateBegin), DateOnly.FromDateTime(DateEnd), buyerId, IsPaid);
+        var parameter = new InvoiceInputParameter(DateOnly.FromDateTime(DateBegin), DateOnly.FromDateTime(DateEnd), Buyer.Id, IsPaid);
         var invoices = await _invoiceApiClient.GetAsync(parameter);
         InvoiceDtos = new(invoices);
         OnPropertyChanged(nameof(InvoiceDtos));
-        DateTimeLoad = DateTime.Now;
-        OnPropertyChanged(nameof(DateTimeLoad));
-    }
-
-    private void OnPropertyChanged([CallerMemberName] string prop = "") {
-        PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(prop));
     }
 }

@@ -1,16 +1,24 @@
-using SmartSaleApp.Interfaces.Factory;
+using SmartSaleApp.Interfaces.ApiClients;
 using SmartSaleApp.ViewModels;
 
 namespace SmartSaleApp.Pages;
 
 public partial class HistoryPage : ContentPage {
-    private readonly IHistoryViewModelFactory _historyViewModelFactory;
+    private readonly IInvoiceApiClient _invoiceApiClient;
+    private readonly IBuyerApiClient _buyerApiClient;
+    private readonly HistoryViewModel _historyViewModel;
 
-    public HistoryPage(IHistoryViewModelFactory historyViewModelFactory) {
+    public HistoryPage(IInvoiceApiClient invoiceApiClient, IBuyerApiClient buyerApiClient) {
         InitializeComponent();
-        _historyViewModelFactory = historyViewModelFactory;
-        var historyViewModel = _historyViewModelFactory.Create();
-        BindingContext = historyViewModel;
+        _invoiceApiClient = invoiceApiClient;
+        _buyerApiClient = buyerApiClient;
+        _historyViewModel = new HistoryViewModel(_invoiceApiClient, _buyerApiClient);
+        BindingContext = _historyViewModel;
+    }
+
+    protected override async void OnAppearing() {
+        base.OnAppearing();
+        await _historyViewModel.LoadAsync();
     }
 
     private async void Reset(object sender, EventArgs e) {
@@ -22,6 +30,6 @@ public partial class HistoryPage : ContentPage {
     }
 
     private void OnReset() {
-        BindingContext = _historyViewModelFactory.Create();
+        BindingContext = new HistoryViewModel(_invoiceApiClient, _buyerApiClient);
     }
 }

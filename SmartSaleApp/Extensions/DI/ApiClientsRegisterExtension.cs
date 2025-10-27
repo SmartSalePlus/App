@@ -1,4 +1,5 @@
 ﻿using Refit;
+using SmartSaleApp.Handlers;
 using SmartSaleApp.Interfaces.ApiClients;
 
 namespace SmartSaleApp.Extensions.DI;
@@ -9,6 +10,7 @@ internal static class ApiClientsRegisterExtension {
         services.AddApiClient<IInvoiceApiClient>("invoice");
         services.AddApiClient<IProductApiClient>("product");
         services.AddApiClient<IReceptionApiClient>("reception");
+        services.AddApiClient<ISecurityApiClient>("security");
 
         return services;
     }
@@ -16,6 +18,7 @@ internal static class ApiClientsRegisterExtension {
     private static IServiceCollection AddApiClient<T>(this IServiceCollection services, string controllerName) where T : class {
         services.AddRefitClient<T>()
             .ConfigureHttpClient(x => x.BaseAddress = new Uri($"{GetBaseAddress()}/{controllerName}"))
+            .AddHttpMessageHandler<AuthorizationHandler>()
             .ConfigurePrimaryHttpMessageHandler(() => {
                 var handler = new HttpClientHandler();
 #if DEBUG

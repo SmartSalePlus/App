@@ -1,7 +1,6 @@
 ﻿using Microsoft.Extensions.Logging;
 using SmartSaleApp.Extensions.DI;
-using SmartSaleApp.Factories;
-using SmartSaleApp.Interfaces.Factory;
+using SmartSaleApp.Handlers;
 using SmartSaleApp.Pages;
 using SmartSaleApp.ViewModels;
 
@@ -16,6 +15,7 @@ public static class MauiProgram {
                 fonts.AddFont("OpenSans-Regular.ttf", "OpenSansRegular");
                 fonts.AddFont("OpenSans-Semibold.ttf", "OpenSansSemibold");
             });
+        builder.Services.AddScoped<AuthorizationHandler>();
         builder.Services.AddApiClients();
 
         builder.Services.AddScoped<HomePage>();
@@ -24,19 +24,14 @@ public static class MauiProgram {
         builder.Services.AddScoped<BuyerPage>();
         builder.Services.AddScoped<ProductPage>();
         builder.Services.AddScoped<ProductModalPage>();
+        builder.Services.AddScoped<LoginPage>();
+        builder.Services.AddScoped<StartupPage>();
 
         builder.Services.AddScoped<HomeViewModel>();
         builder.Services.AddScoped<HomeModalViewModel>();
         builder.Services.AddScoped<HistoryViewModel>();
-        builder.Services.AddScoped<BuyerViewModel>();
         builder.Services.AddScoped<ProductViewModel>();
         builder.Services.AddScoped<ProductModalViewModel>();
-
-        builder.Services.AddScoped<IHomeViewModelFactory, HomeViewModelFactory>();
-        builder.Services.AddScoped<IHomeModalViewModelFactory, HomeModalViewModelFactory>();
-        builder.Services.AddScoped<IHistoryViewModelFactory, HistoryViewModelFactory>();
-        builder.Services.AddScoped<IProductViewModelFactory, ProductViewModelFactory>();
-        builder.Services.AddScoped<IProductModalViewModelFactory, ProductModalViewModelFactory>();
 
 #if DEBUG
         builder.Logging.AddDebug();

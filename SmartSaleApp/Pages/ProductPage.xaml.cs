@@ -1,14 +1,19 @@
-using SmartSaleApp.Interfaces.Factory;
+using SmartSaleApp.Interfaces.ApiClients;
+using SmartSaleApp.ViewModels;
 
 namespace SmartSaleApp.Pages;
 
 public partial class ProductPage : ContentPage {
-    private readonly IProductViewModelFactory _productViewModelFactory;
+    private readonly ProductViewModel _productViewModel;
 
-    public ProductPage(IProductViewModelFactory productViewModelFactory) { 
+    public ProductPage(IProductApiClient productApiClient) {
         InitializeComponent();
-        _productViewModelFactory = productViewModelFactory;
-        var productViewModel = _productViewModelFactory.Create(Navigation);
-        BindingContext = productViewModel;
+        _productViewModel = new(productApiClient);
+        BindingContext = _productViewModel;
+    }
+
+    protected override async void OnAppearing() {
+        base.OnAppearing();
+        await _productViewModel.LoadAsync();
     }
 }
