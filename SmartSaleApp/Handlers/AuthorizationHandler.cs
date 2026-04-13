@@ -11,14 +11,15 @@ public sealed class AuthorizationHandler : DelegatingHandler {
     }
 
     protected override async Task<HttpResponseMessage> SendAsync(HttpRequestMessage request, CancellationToken cancellationToken) {
-        var token = await JwtHelper.GetTokenAsync();
+        //JwtHelper.InitializeDatabase();
+        var token = JwtHelper.GetToken();
         request.Headers.Authorization = new("Bearer", token);
 
         var response = await base.SendAsync(request, cancellationToken);
         if (response.StatusCode == HttpStatusCode.Unauthorized) {
-            MainThread.BeginInvokeOnMainThread(async () => {
+            MainThread.BeginInvokeOnMainThread(() => {
                 if (!PageHelper.IsLoginPage) {
-                    await JwtHelper.SetTokenAsync("");
+                    JwtHelper.SetToken("");
                     PageHelper.Current = new NavigationPage(_loginPage.Value);
                 }
             });

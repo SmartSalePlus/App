@@ -5,7 +5,7 @@
     <VerticalStackLayout>
         <Entry Text="{Binding Login}"/>
         <Entry Text="{Binding Password}"/>
-        <Button Command="{Binding LoginCommand}"/>
+        <Button Text="Войти" Command="{Binding LoginCommand}"/>
         <Label Text="{Binding Error}"/>
     </VerticalStackLayout>
 </ContentPage>

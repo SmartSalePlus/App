@@ -3,8 +3,8 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
              xmlns:vm="clr-namespace:SmartSaleApp.ViewModels"
              xmlns:c="clr-namespace:SmartSaleApp.Converters"
-             xmlns:android="clr-namespace:Microsoft.Maui.Controls.PlatformConfiguration.AndroidSpecific;assembly=Microsoft.Maui.Controls"
-             x:Class="SmartSaleApp.Pages.HomePage" >
+             x:Class="SmartSaleApp.Pages.HomePage"
+             Title="Накладная">
 
     <ContentPage.Resources>
         <c:StringToDoubleConverter x:Key="StringToDoubleConverter"  />
@@ -14,108 +14,126 @@
         <Grid Padding="20" InputTransparent="{Binding IsBusy}">
             <Grid.RowDefinitions>
                 <RowDefinition Height="Auto" />
-                <RowDefinition Height="Auto" />
                 <RowDefinition Height="8*" />
                 <RowDefinition Height="Auto" />
-                <RowDefinition Height="*" />
                 <RowDefinition Height="Auto" />
             </Grid.RowDefinitions>
 
+            <Grid Grid.Row="0" Padding="0,0,0,20">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                </Grid.RowDefinitions>
 
-            <DatePicker Grid.Row="0" Date="{Binding Date}" Format="dd-MM-yyyy" />
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="2*" />
+                </Grid.ColumnDefinitions>
 
-            <Picker Grid.Row="1" ItemsSource="{Binding Buyers}" 
-                Title="Клиент"
-                ItemDisplayBinding="{Binding Name}" SelectedItem="{Binding Buyer}" />
+                <Label Grid.Row="0" Grid.Column="0" Text="Дата:" VerticalOptions="Center"/>
+                <DatePicker Grid.Row="0" Grid.Column="1" 
+                            Date="{Binding Date}" Format="dd-MM-yyyy" 
+                            VerticalOptions="Center" />
 
-            <CollectionView Grid.Row="2" Margin='4,10,0,0' ItemsSource="{Binding InvoiceDetailDtos}" >
+                <Label Grid.Row="1" Grid.Column="0" Text="Клиент:" VerticalOptions="Center" />
+                <Picker Grid.Row="1" Grid.Column="1" ItemsSource="{Binding Buyers}"
+                        ItemDisplayBinding="{Binding Name}" SelectedItem="{Binding Buyer}"
+                        VerticalOptions="Center" />
+            </Grid>
+
+            <CollectionView Grid.Row="1" ItemsSource="{Binding InvoiceDetailDtos}" SelectionMode="Single" SelectedItem="{Binding InvoiceDetailDto}" >
                 <CollectionView.ItemsLayout>
                     <LinearItemsLayout Orientation="Vertical" ItemSpacing="10" />
                 </CollectionView.ItemsLayout>
 
-                <CollectionView.Header>
-                    <Grid ColumnSpacing="4">
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="10*"/>
-                            <ColumnDefinition Width="3*"/>
-                            <ColumnDefinition Width="2*"/>
-                            <ColumnDefinition Width="4*"/>
-                        </Grid.ColumnDefinitions>
-
-                        <Label Grid.Column="0" Text="Наименование" />
-                        <Label Grid.Column="1" Text="Кол-во" />
-                        <Label Grid.Column="2" Text="Цена" />
-                        <Label Grid.Column="3" Text="Сумма" HorizontalOptions="End" />
-                    </Grid>
-                </CollectionView.Header>
                 <CollectionView.ItemTemplate>
                     <DataTemplate>
-                        <SwipeView android:SwipeView.SwipeTransitionMode="Drag">
-                            <SwipeView.RightItems>
-                                <SwipeItems>
-                                    <SwipeItem Text="Edit" 
-                                           BackgroundColor="Green" 
-                                           Command="{Binding Source={RelativeSource AncestorType={x:Type vm:HomeViewModel}}, Path=EditCommand}" 
-                                           CommandParameter="{Binding .}"/>
-                                    <SwipeItem Text="Delete" 
-                                           BackgroundColor="HotPink" 
-                                           Command="{Binding Source={RelativeSource AncestorType={x:Type vm:HomeViewModel}}, Path=DeleteCommand}"
-                                           CommandParameter="{Binding .}"/>
-                                </SwipeItems>
-                            </SwipeView.RightItems>
+                        <Border Padding="10">
+                            <Border.StrokeShape>
+                                <RoundRectangle CornerRadius="10"/>
+                            </Border.StrokeShape>
 
-                            <Grid ColumnSpacing="4" >
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="10*" />
-                                    <ColumnDefinition Width="3*" />
-                                    <ColumnDefinition Width="2*" />
-                                    <ColumnDefinition Width="4*" />
-                                </Grid.ColumnDefinitions>
+                            <Grid RowSpacing="5">
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="Auto" />
+                                    <RowDefinition Height="Auto" />
+                                </Grid.RowDefinitions>
 
-                                <Label Grid.Column="0" Text="{Binding ProductDto}" />
-                                <Label Grid.Column="1" Text="{Binding Count}" />
-                                <Label Grid.Column="2" Text="{Binding Price}" />
-                                <Label Grid.Column="3" Text="{Binding Total}" HorizontalOptions="End" />
+                                <Grid Grid.Row="0">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="*"/>
+                                        <ColumnDefinition Width="4*"/>
+                                    </Grid.ColumnDefinitions>
+
+                                    <Label Grid.Column="0" Text="{Binding Number, StringFormat='№: {0}'}" />
+                                    <Label Grid.Column="1" Text="{Binding ProductDto}" />
+                                </Grid>
+
+                                <Grid Grid.Row="1">
+                                    <Grid.ColumnDefinitions>
+                                        <ColumnDefinition Width="*" />
+                                        <ColumnDefinition Width="*" />
+                                        <ColumnDefinition Width="*" />
+                                    </Grid.ColumnDefinitions>
+
+                                    <Label Grid.Column="0" Text="{Binding Count, StringFormat='Кол-во: {0}'}" />
+                                    <Label Grid.Column="1" Text="{Binding Price, StringFormat='Цена: {0:N1}'}" />
+                                    <Label Grid.Column="2" Text="{Binding Total, StringFormat='Сумма: {0:N0}'}" />
+                                </Grid>
                             </Grid>
-                        </SwipeView>
+                        </Border>
                     </DataTemplate>
                 </CollectionView.ItemTemplate>
             </CollectionView>
 
-            <Grid Grid.Row="3">
-                <Grid.ColumnDefinitions>
-                    <ColumnDefinition Width="3*"/>
-                    <ColumnDefinition Width="*"/>
-                    <ColumnDefinition Width="Auto"/>
-                    <ColumnDefinition Width="Auto"/>
-                </Grid.ColumnDefinitions>
+            <Grid Grid.Row="2">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                </Grid.RowDefinitions>
 
-                <Label Grid.Column="0" Text="{Binding Total, StringFormat='Итого: {0:N0}'}" VerticalOptions="Center" />
+                <Label Grid.Row="0" Text="{Binding Total, StringFormat='Итого: {0:N0}'}" />
 
-                <Entry Grid.Column="1" Text="{Binding Discount, Converter={StaticResource StringToDoubleConverter}}" 
-                   Placeholder="Скидка" Keyboard="Numeric" MaxLength="5" />
+                <Grid Grid.Row="1">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition Width="Auto" />
+                    </Grid.ColumnDefinitions>
 
-                <Label Grid.Column="2" Padding="20,0,0,0" Text="Расчет" VerticalOptions="Center" >
-                    <Label.GestureRecognizers>
-                        <TapGestureRecognizer Command="{Binding SetIsPaidCommand}" />
-                    </Label.GestureRecognizers>
-                </Label>
+                    <Label Grid.Column="0" Text="Скидка:" VerticalOptions="Center" />
+                    <Entry Grid.Column="1" Text="{Binding Discount, Converter={StaticResource StringToDoubleConverter}}"
+                           Keyboard="Numeric" MaxLength="5" />
+                    <Label Grid.Column="3" Text="Оплачено: " VerticalOptions="Center" >
+                        <Label.GestureRecognizers>
+                            <TapGestureRecognizer Command="{Binding SetIsPaidCommand}" />
+                        </Label.GestureRecognizers>
+                    </Label>
 
-                <CheckBox Grid.Column="3" IsChecked="{Binding IsPaid}" />
+                    <CheckBox Grid.Column="4" IsChecked="{Binding IsPaid}" />
+                </Grid>
+
+                <Label Grid.Row="2" Text="{Binding TotalWithDiscount, StringFormat='Итого со скидкой: {0:N0}'}" />
             </Grid>
 
-            <Label Grid.Row="4" Text="{Binding TotalWithDiscount, StringFormat='Итого со скидкой: {0:N0}'}" />
+            <Grid Grid.Row="3" RowSpacing="10" Padding="0,30,0,0">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                </Grid.RowDefinitions>
 
-            <Grid Grid.Row="5" ColumnSpacing="10" >
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="Auto" />
-                    <ColumnDefinition Width="2*" />
-                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="3*" />
                 </Grid.ColumnDefinitions>
 
-                <Button Grid.Column="0" Text="Сбросить" Command="{Binding ResetCommand}" />
-                <Button Grid.Column="1" Text="Сохранить" Command="{Binding SaveCommand}" HorizontalOptions="End" />
-                <Button Grid.Column="2" Text="Добавить товар" Command="{Binding AddCommand}"  />
+                <Button Grid.Row="0" Grid.Column="0" Text="Удалить все" BackgroundColor="MediumVioletRed" Command="{Binding ResetCommand}" />
+                <Button Grid.Row="1" Grid.Column="0" Text="Сохранить" Command="{Binding SaveCommand}" />
+                <Button Grid.Row="1" Grid.Column="2" Text="Добавить" Command="{Binding AddCommand}"  />
             </Grid>
         </Grid>
 

@@ -24,13 +24,14 @@
                                 <RoundRectangle CornerRadius="10"/>
                             </Border.StrokeShape>
 
-                            <Grid>
+                            <Grid ColumnSpacing="10">
                                 <Grid.ColumnDefinitions>
                                     <ColumnDefinition Width="*"/>
                                     <ColumnDefinition Width="Auto"/>
                                 </Grid.ColumnDefinitions>
 
                                 <Label Grid.Column="0" Text="{Binding Name}" VerticalOptions="Center" />
+                                <Button Grid.Column="1" Text="Скачать" Command="{Binding Source={RelativeSource AncestorType={x:Type vm:BuyerViewModel}}, Path=GetFileCommand}" CommandParameter="{Binding .}" />
                                 <!--<Button Grid.Column="1" Text="Удалить" Command="{Binding Source={RelativeSource AncestorType={x:Type vm:BuyerViewModel}}, Path=DeleteCommand}" CommandParameter="{Binding .}" />-->
                             </Grid>
                         </Border>

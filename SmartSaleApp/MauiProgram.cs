@@ -3,6 +3,8 @@ using SmartSaleApp.Extensions.DI;
 using SmartSaleApp.Handlers;
 using SmartSaleApp.Pages;
 using SmartSaleApp.ViewModels;
+using CommunityToolkit.Maui;
+using CommunityToolkit.Maui.Storage;
 
 namespace SmartSaleApp;
 
@@ -11,6 +13,7 @@ public static class MauiProgram {
         var builder = MauiApp.CreateBuilder();
         builder
             .UseMauiApp<App>()
+            .UseMauiCommunityToolkit()
             .ConfigureFonts(fonts => {
                 fonts.AddFont("OpenSans-Regular.ttf", "OpenSansRegular");
                 fonts.AddFont("OpenSans-Semibold.ttf", "OpenSansSemibold");
@@ -33,6 +36,7 @@ public static class MauiProgram {
         builder.Services.AddScoped<ProductViewModel>();
         builder.Services.AddScoped<ProductModalViewModel>();
 
+        builder.Services.AddSingleton<IFileSaver>(FileSaver.Default);
 #if DEBUG
         builder.Logging.AddDebug();
 #endif

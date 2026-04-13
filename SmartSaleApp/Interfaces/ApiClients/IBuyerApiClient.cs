@@ -21,4 +21,7 @@ public interface IBuyerApiClient {
 
     [Get("/get")]
     Task<IEnumerable<Buyer>> GetAsync();
+
+    [Get("/getfile")]
+    Task<Stream> GetFile(int buyerId);
 }

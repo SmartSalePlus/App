@@ -11,9 +11,7 @@ namespace SmartSaleApp.ViewModels;
 
 public sealed class HomeViewModel : ViewModelBase {
     public ICommand AddCommand { get; }
-    public ICommand EditCommand { get; }
     public ICommand SaveCommand { get; }
-    public ICommand DeleteCommand { get; }
     public ICommand ResetCommand { get; }
     public ICommand SetIsPaidCommand { get; }
     public ObservableCollection<Buyer> Buyers { get; private set; } = [];
@@ -74,6 +72,17 @@ public sealed class HomeViewModel : ViewModelBase {
         }
     }
 
+    public InvoiceDetailDto? InvoiceDetailDto {
+        get => null;
+        set {
+            if (value != null) {
+                _index = InvoiceDetailDtos.IndexOf(value);
+                _ = OpenModalPageAsync(value.Clone(), Update, Delete);
+                OnPropertyChanged();
+            }
+        }
+    }
+
     private readonly IBuyerApiClient _buyerApiClient;
     private readonly IInvoiceApiClient _invoiceApiClient;
     private readonly IProductApiClient _productApiClient;
@@ -93,9 +102,7 @@ public sealed class HomeViewModel : ViewModelBase {
         _invoiceDto = new();
         _ = LoadAsync();
         AddCommand = new Command(async () => await OpenModalPageAsync(new(), Add));
-        EditCommand = new Command<InvoiceDetailDto>(async (x) => { _index = InvoiceDetailDtos.IndexOf(x); await OpenModalPageAsync(x.Clone(), Update); });
         SaveCommand = new Command(async () => await SaveAsync(), IsValid);
-        DeleteCommand = new Command<InvoiceDetailDto>(Delete);
         ResetCommand = new Command(async () => await ConfirmResetAsync());
         SetIsPaidCommand = new Command(() => IsPaid = !IsPaid);
     }
@@ -109,12 +116,18 @@ public sealed class HomeViewModel : ViewModelBase {
         });
     }
 
-    private async Task OpenModalPageAsync(InvoiceDetailDto invoiceDetailDto, Action<InvoiceDetailDto> saveHandler) {
-        HomeModalViewModel homeModalViewModel = new(invoiceDetailDto, _productDtos, saveHandler);
+    private async Task OpenModalPageAsync(
+        InvoiceDetailDto invoiceDetailDto,
+        Action<InvoiceDetailDto> saveHandler,
+        Action? deleteHandler = null
+    ) {
+        HomeModalViewModel homeModalViewModel = new(invoiceDetailDto, _productDtos, saveHandler, deleteHandler);
         await PageHelper.Current.Navigation.PushModalAsync(new HomeModalPage(homeModalViewModel));
     }
 
     private void Add(InvoiceDetailDto invoiceDetailDto) {
+        var number = InvoiceDetailDtos.Count + 1;
+        invoiceDetailDto.Number = number;
         InvoiceDetailDtos.Add(invoiceDetailDto);
         Total = InvoiceDetailDtos.Sum(x => x.Total);
     }
@@ -124,12 +137,23 @@ public sealed class HomeViewModel : ViewModelBase {
         Total = InvoiceDetailDtos.Sum(x => x.Total);
     }
 
-    private void Delete(InvoiceDetailDto invoiceDetailDto) {
-        InvoiceDetailDtos.Remove(invoiceDetailDto);
+    private void Delete() {
+        InvoiceDetailDtos.RemoveAt(_index);
+        if (_index < InvoiceDetailDtos.Count) {
+            UpdateNumbers(_index);
+        }
+    }
+
+    private void UpdateNumbers(int startIndex) {
+        for (int i = startIndex; i < InvoiceDetailDtos.Count; i++) {
+            var invoiceDetailDto = InvoiceDetailDtos[i];
+            invoiceDetailDto.Number = i + 1;
+            InvoiceDetailDtos[i] = invoiceDetailDto;
+        }
     }
 
     private async Task ConfirmResetAsync() {
-        bool isReset = await PageHelper.Current.DisplayAlert("Подтвердить действие", "Вы хотите все сбросить?", "Да", "Нет");
+        bool isReset = await PageHelper.Current.DisplayAlert("Подтвердить действие", "Вы хотите все удалить?", "Да", "Нет");
 
         if (isReset) {
             await ResetAsync();

@@ -54,7 +54,7 @@ public sealed class LoginViewModel : INotifyPropertyChanged {
 
     private async Task SignIn() {
         var token = await _authApiClient.LoginAsync(new(_login, _password));
-        await JwtHelper.SetTokenAsync(token);
+        JwtHelper.SetToken(token);
         PageHelper.Current = new AppShell();
     }
 

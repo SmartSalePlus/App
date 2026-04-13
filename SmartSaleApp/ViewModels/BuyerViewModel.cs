@@ -1,13 +1,16 @@
-﻿using SmartSaleApp.Helpers;
+﻿using CommunityToolkit.Maui.Storage;
+using SmartSaleApp.Helpers;
 using SmartSaleApp.Interfaces.ApiClients;
 using SmartSaleApp.Models.Data;
 using System.Collections.ObjectModel;
+using System.Globalization;
 using System.Windows.Input;
 
 namespace SmartSaleApp.ViewModels;
 
 public sealed class BuyerViewModel : ViewModelBase {
     public ICommand AddCommand { get; }
+    public ICommand GetFileCommand { get; }
     public ObservableCollection<Buyer> Buyers { get; private set; } = [];
 
     public Buyer? Buyer {
@@ -21,10 +24,13 @@ public sealed class BuyerViewModel : ViewModelBase {
     }
 
     private readonly IBuyerApiClient _buyerApiClient;
+    private readonly IFileSaver _fileSaver;
 
-    public BuyerViewModel(IBuyerApiClient buyerApiClient) {
+    public BuyerViewModel(IBuyerApiClient buyerApiClient, IFileSaver fileSaver) {
         _buyerApiClient = buyerApiClient;
+        _fileSaver = fileSaver;
         AddCommand = new Command(async () => await AddAsync());
+        GetFileCommand = new Command<Buyer>(async (x) => await GetFileAsync(x));
     }
 
     public async Task LoadAsync() {
@@ -60,6 +66,15 @@ public sealed class BuyerViewModel : ViewModelBase {
         await ExecuteAsync(async () => {
             await _buyerApiClient.UpdateAsync(new(buyer.Id, name));
             await GetAsync();
+        });
+    }
+
+    private async Task GetFileAsync(Buyer buyer) {
+        await ExecuteAsync(async () => {
+            var file = await _buyerApiClient.GetFile(buyer.Id);
+            var date = DateTime.Now.ToString("dd-MM-yyyy", CultureInfo.InvariantCulture);
+            var name = $"{buyer.Name}_{date}.pdf";
+            await _fileSaver.SaveAsync(name, file);
         });
     }
 }
